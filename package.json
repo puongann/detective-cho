@@ -1,0 +1,26 @@
+{
+  "name": "crime-scene-detective",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "art": "node scripts/build-art.js",
+    "lint:level": "node scripts/lint-level.js",
+    "test": "node --test tests/",
+    "build": "node scripts/build-art.js && node scripts/lint-level.js && vite build",
+    "preview": "vite preview",
+    "e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "vite": "^5.4.21"
+  },
+  "dependencies": {
+    "dictionary-en": "^4.0.0",
+    "dictionary-en-gb": "^3.0.0",
+    "firebase": "^13.3.0",
+    "nspell": "^2.1.5",
+    "qrcode-generator": "^2.0.4"
+  }
+}
