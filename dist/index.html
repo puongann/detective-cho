@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Crime Scene Detective</title>
+  <link rel="icon" href="assets/cho.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@600;800&display=swap" rel="stylesheet" />
+  <style>
+    :root { --ink: #4a3428; --paper: #fffaf6; --grid: #f7e1e2; }
+    body { margin: 0; min-height: 100dvh; display: grid; place-items: center; font-family: Nunito, system-ui, sans-serif; color: var(--ink); text-align: center; padding: 16px; box-sizing: border-box;
+      background-color: var(--paper); background-image: linear-gradient(var(--grid) 2px, transparent 2px), linear-gradient(90deg, var(--grid) 2px, transparent 2px); background-size: 46px 46px; }
+    main { background: #fff; border: 3px solid var(--ink); border-radius: 30px; padding: 24px 20px 28px; box-shadow: 0 8px 0 rgba(74,52,40,.2); max-width: 760px; }
+    img { width: 150px; animation: bob 2.4s ease-in-out infinite; transform-origin: 50% 90%; }
+    @keyframes bob { 50% { transform: translateY(-8px) rotate(-4deg); } }
+    h1 { font-family: 'Baloo 2', Nunito, sans-serif; font-size: clamp(30px, 6vw, 56px); line-height: 1.05; margin: 8px 0; }
+    p { max-width: 32em; margin: 0 auto 18px; font-weight: 600; }
+    .row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    a { display: inline-block; padding: 14px 24px 12px; border: 3px solid var(--ink); border-radius: 999px; background: #f4b04a; color: var(--ink); font-family: 'Baloo 2', Nunito, sans-serif; font-weight: 800; font-size: 20px; text-decoration: none; min-width: 220px; box-shadow: 0 5px 0 var(--ink); }
+    a:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
+    a.alt { background: #f6aaa4; } a.alt2 { background: #fff; }
+    @media (prefers-reduced-motion: reduce) { img { animation: none; } }
+  </style>
+</head>
+<body>
+  <main>
+    <img src="assets/cho.png" alt="Chó, the orange cat detective" />
+    <h1>Crime Scene Detective</h1>
+    <p>The Missing Ring at Sunflower Hotel. A passive-voice mystery for the whole class.</p>
+    <div class="row">
+      <a href="host/">🖥️ Big screen (teacher)</a>
+      <a class="alt" href="play/">📱 Join on a phone</a>
+      <a class="alt2" href="host/?demo=1">🧪 Demo (15 fake students)</a>
+    </div>
+  </main>
+</body>
+</html>
