@@ -65,10 +65,21 @@ textarea { width: 100%; font-size: 18px; min-height: 64px; padding: 10px 14px; b
 .step { min-height: 48px; border-radius: 999px; border: 3px solid var(--ink); background: #fff; color: var(--ink); font-family: var(--display); font-weight: 800; font-size: 16px; box-shadow: 0 3px 0 var(--ink); }
 .step.on { background: var(--pink); }
 .warn2 { color: var(--red); font-weight: 900; text-align: center; margin: 0; animation: pulse 1s infinite; }
-body.kb-open .pic, body.typing .pic { width: 34%; aspect-ratio: 16 / 10; }
-body.kb-open .prompt { -webkit-line-clamp: 2; font-size: 15px; }
-body.kb-open .advice { font-size: 13px; }
-body.kb-open .steps { display: none; }
+/* Typing on a portrait phone: the picture stays full width. The screen is just picture + prompt + text box + Submit,
+   sized to the visible area above the keyboard (--vvh), so nothing hides the picture. */
+@media (max-width: 599px) {
+  .write { padding-left: 6px; padding-right: 6px; }
+  body.typing .write { min-height: 0; height: calc(var(--vvh, 100dvh) - var(--headh, 50px)); padding-bottom: 6px; gap: 6px; overflow: hidden; }
+  body.typing .pic { flex: 1 1 0; min-height: 64px; max-height: calc((100vw - 12px) * 10 / 16 + 6px); aspect-ratio: auto; }
+  body.typing .pic img { object-fit: contain; }
+  body.typing .scene-of, body.typing .row-btns, body.typing .steps, body.typing #nextScene, body.typing .zoom, body.typing .warn2 { display: none; }
+  body.typing .prompt { -webkit-line-clamp: 1; font-size: 15px; flex: none; }
+  body.typing .use { font-size: 15px; flex: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  body.typing .advice { font-size: 13px; flex: none; padding: 4px 8px; }
+  body.typing .actions { position: static; padding-top: 0; background: none; flex: none; margin-top: 0; }
+  body.typing textarea { min-height: 48px; }
+  body.typing .btn.submit { min-height: 48px; font-size: 20px; }
+}
 .zoombox { position: fixed; inset: 0; background: rgba(74,52,40,.92); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 10px; gap: 10px; animation: viewIn .2s; }
 .zoombox img { max-width: 100%; max-height: 80vh; touch-action: pinch-zoom; border: 3px solid #fff; border-radius: 16px; }
 .zoombox .btn { max-width: 240px; }

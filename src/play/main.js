@@ -444,7 +444,7 @@ async function wakeLock() {
   document.addEventListener('visibilitychange', req);
   document.addEventListener('click', () => { if (!lock) req(); }, { once: true });
 }
-// Keyboard: keep the text box + Submit above the keyboard; shrink the picture.
+// Keyboard: keep the text box + Submit above the keyboard (--vvh = visible height).
 if (window.visualViewport) {
   const vv = window.visualViewport;
   const onVV = () => {
@@ -453,6 +453,16 @@ if (window.visualViewport) {
   };
   vv.addEventListener('resize', onVV); onVV();
 }
-document.addEventListener('focusin', (e) => { if (e.target.tagName === 'TEXTAREA') { document.body.classList.add('typing'); setTimeout(() => e.target.scrollIntoView({ block: 'center', behavior: 'smooth' }), 250); } });
+// Typing: the whole writing screen fits above the keyboard (see body.typing in play.css), so keep the page at the top:
+// the picture stays big and visible instead of scrolling away.
+const headH = () => document.documentElement.style.setProperty('--headh', (document.querySelector('.ph-head')?.offsetHeight || 50) + 'px');
+const toTop = () => { if (document.body.classList.contains('typing') && innerWidth < 600) window.scrollTo(0, 0); };
+document.addEventListener('focusin', (e) => {
+  if (e.target.tagName !== 'TEXTAREA') return;
+  document.body.classList.add('typing'); headH();
+  if (innerWidth < 600) [80, 300, 600].forEach((ms) => setTimeout(toTop, ms));
+  else setTimeout(() => e.target.scrollIntoView({ block: 'center', behavior: 'smooth' }), 250);
+});
+window.visualViewport?.addEventListener('resize', () => setTimeout(toTop, 50));
 document.addEventListener('focusout', (e) => { if (e.target.tagName === 'TEXTAREA') document.body.classList.remove('typing'); });
 void CHO_GAGS; void phraseCard;
