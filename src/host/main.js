@@ -49,18 +49,20 @@ async function boot() {
   db = await connect({ local: DEMO || params.has('local') });
   // Spelling dictionary: big, so load it lazily (host only).
   import('../lib/speller.js').then((m) => { isWord = m.getIsWord(); }).catch((e) => console.warn('speller', e));
-  const saved = !DEMO && localStorage.getItem('csd-host-room');
+  const saved = !DEMO && localStorage.getItem(`csd-host-room-${db.mode}`);
   code = params.get('room') || saved || null;
   if (code) {
     const host = await db.get(P(code).host);
-    if (host && host !== db.uid) code = null; // someone else's room
+    // Resume only a room this browser really hosts. A saved code can belong to someone else,
+    // or to a local-mode room that never existed on Firebase: then make a new room.
+    if (host !== db.uid) code = null;
   }
   if (!code || DEMO) {
     if (DEMO && db.resetAll) db.resetAll();
     code = DEMO ? 'DEMO' : await createRoom();
     if (DEMO) { await db.set(P(code).host, db.uid); await db.set(P(code).pub, freshPub()); }
   }
-  localStorage.setItem('csd-host-room', code);
+  localStorage.setItem(`csd-host-room-${db.mode}`, code);
   paths = P(code);
   const hd = (await db.get(paths.hostData)) || {};
   G.verdicts = hd.verdicts || {};
@@ -338,7 +340,7 @@ function renderLobby(update = false) {
     await db.remove(`${paths.players}/${uid}`);
   });
   $stage.querySelector('#startBtn').onclick = startCase;
-  $stage.querySelector('#newRoom').onclick = async () => { localStorage.removeItem('csd-host-room'); location.search = DEMO ? '?demo=1' : ''; };
+  $stage.querySelector('#newRoom').onclick = async () => { localStorage.removeItem(`csd-host-room-${db.mode}`); location.search = DEMO ? '?demo=1' : ''; };
   void update;
 }
 
