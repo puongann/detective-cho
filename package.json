@@ -7,7 +7,7 @@
     "dev": "vite",
     "art": "node scripts/build-art.js",
     "lint:level": "node scripts/lint-level.js",
-    "test": "node --test tests/",
+    "test": "node --test tests/*.test.js",
     "build": "node scripts/build-art.js && node scripts/lint-level.js && vite build",
     "preview": "vite preview",
     "e2e": "playwright test"
