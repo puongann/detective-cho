@@ -547,7 +547,7 @@ async function actCard(act, t) {
 function sceneHTML(sc) {
   const a = G.pub.assign?.[sc.n];
   return `<div class="scene-card slide-in">
-    <div class="sc-pic"><img src="${assetUrl(sc.image)}" alt="${esc(sc.title)}"></div>
+    <div class="sc-pic"><img src="${assetUrl(sc.image)}" alt="${esc(sc.title)}"><div class="stamp-slot" id="stampSlot"></div></div>
     <div class="sc-text">
       <div class="sc-head"><span class="sc-num">Clue #${sc.n}</span><span class="sc-title">${esc(sc.title)}</span>${sc.mode === 'phrase' ? '<span class="tag-phrase">PHRASE</span>' : '<span class="tag-clue">CLUE</span>'}</div>
       ${sc.previously ? `<div class="sc-prev">${rich(sc.previously, sc.glossary)}</div>` : ''}
@@ -556,7 +556,6 @@ function sceneHTML(sc) {
       <div class="sc-report" id="scReport"><span class="rep-label">Detective's report:</span> <span class="rep-text" id="repText"></span><span class="caret">▍</span></div>
       <div class="sc-after" id="scAfter"></div>
     </div>
-    <div class="stamp-slot" id="stampSlot"></div>
     <div class="reasons ${G.settings.showReasons ? 'open' : ''}" id="reasons"></div>
   </div>`;
 }
@@ -584,14 +583,17 @@ async function typeSentence(text, t) {
   await wait(500);
 }
 
+const failStampHTML = (sub) => `<div class="stamp bad">${esc(FAIL_STAMP).replace(': ', ':<br>')}<small>${esc(sub)}</small></div>`;
 function stamp(ok) {
   const slot = document.getElementById('stampSlot');
   if (!slot) return;
-  slot.innerHTML = ok
-    ? `<div class="stamp ok">${esc(pick(REVEAL_PRAISE))}</div>`
-    : `<div class="stamp bad">${esc(FAIL_STAMP)}<small>${esc(FAIL_SUB)}</small></div>`;
-  sfx.stamp();
+  slot.innerHTML = ok ? `<div class="stamp ok">${esc(pick(REVEAL_PRAISE))}</div>` : failStampHTML(FAIL_SUB);
+  sfx.stampHit(0.26); // the thud lands with the stamp animation
+  const pic = slot.closest('.sc-pic');
+  if (pic) { pic.classList.remove('thud'); void pic.offsetWidth; pic.classList.add('thud'); }
 }
+/** A failed clue: the whole screen goes grey (only the red stamp and the buttons keep colour). */
+function setGloom(on) { document.body.classList.toggle('gloom', !!on); }
 
 /** Main reveal loop: scenes in order 1..15. */
 async function runReveal(from, opts = {}) {
@@ -604,6 +606,7 @@ async function runReveal(from, opts = {}) {
     if (!ok || !alive(t)) return;
   }
   if (!alive(t)) return;
+  setGloom(false);
   await setPub({ state: 'board', currentScene: 16 });
   renderBoardEnd();
 }
@@ -616,6 +619,7 @@ async function playScene(n, t, { gotcha = false } = {}) {
   spotlightFor(sc);
   await setPub({ state: 'revealing', currentScene: n, fix: null });
   if (!gotcha && act.scenes[0] === n && !G.pub.revealed?.[n]) { if (!(await actCard(act, t))) return false; }
+  setGloom(false);
   st.innerHTML = sceneHTML(sc);
   document.getElementById('stTag').textContent = `Clue ${n} of 15 · ${act.title}`;
   let v = G.verdicts[n] || { text: sentenceOf(n), ...check(sentenceOf(n), sc, { isWord }) };
@@ -636,7 +640,8 @@ async function playScene(n, t, { gotcha = false } = {}) {
     if (v.ok && !forceFail) { result = 'correct'; break; }
     forceFail = false;
     stamp(false);
-    sfx.sad();
+    setGloom(true);
+    setTimeout(() => sfx.sad(), 650);
     document.getElementById('scAfter').innerHTML = `<div class="fail-line">${rich(sc.failLine, sc.glossary)}</div>
       <div class="pause-btns"><button class="beg-btn" id="beg">Beg for a second chance 🥺😭</button><button class="fate-btn" id="fate">Accept our fate 🪦</button></div>`;
     const decided = new Promise((res) => {
@@ -649,7 +654,7 @@ async function playScene(n, t, { gotcha = false } = {}) {
     if (!alive(t)) return false;
     keyHandlers.space = null;
     if (decision === 'fate') { result = 'unresolved'; break; }
-    if (decision === 'override') { result = 'overridden'; break; }
+    if (decision === 'override') { setGloom(false); result = 'overridden'; break; }
     // second chance
     const newText = await secondChance(n, sc, t);
     if (!alive(t)) return false;
@@ -669,7 +674,7 @@ async function playScene(n, t, { gotcha = false } = {}) {
   renderRail(n);
   const after = document.getElementById('scAfter');
   if (result === 'unresolved') {
-    document.getElementById('stampSlot').innerHTML = `<div class="stamp bad">${esc(FAIL_STAMP)}<small>${esc(CLASSIFIED)}</small></div>`;
+    document.getElementById('stampSlot').innerHTML = failStampHTML(CLASSIFIED);
     after.innerHTML = `<div class="bridge">${rich(sc.bridge, sc.glossary)}</div>`;
     await setPub({ state: 'revealing' });
     keyHandlers = { g: () => {}, x: () => overturnLast(n, t), h: () => {} };
@@ -711,7 +716,7 @@ async function doGotcha(n, t) {
   // G: the current scene (if stamped) or the last stamped scene becomes UNRESOLVED.
   const target = G.pub.revealed?.[n] ? n : n - 1;
   if (target < 1) return;
-  sfx.stamp();
+  sfx.stampHit();
   toast(`G · Gotcha! Clue #${target} is not so perfect...`);
   void t;
   await db.update(paths.pub, { [`revealed/${target}`]: null });
@@ -723,6 +728,7 @@ async function overturnLast(n, t) {
   // X after "Accept our fate": accept the sentence after all.
   await db.update(paths.pub, { [`revealed/${n}/status`]: 'overridden' });
   G.pub.revealed[n].status = 'overridden';
+  setGloom(false);
   renderRail(n);
   document.getElementById('stampSlot').innerHTML = `<div class="stamp ok">CLUE FOUND!</div>`;
   toast('X · Xin lỗi! The clue is back.');
@@ -741,6 +747,7 @@ function showHint(sc) {
 
 async function secondChance(n, sc, t) {
   await setPub({ state: 'fixing', fix: { scene: String(n), mode: 'student', since: db.now() } });
+  setGloom(false);
   document.getElementById('stampSlot').innerHTML = '';
   const after = document.getElementById('scAfter');
   const since = G.pub.fix.since;

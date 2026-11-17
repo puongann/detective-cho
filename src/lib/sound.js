@@ -27,6 +27,14 @@ function noise(dur, { vol = 0.3, at = 0 } = {}) {
 }
 export const sfx = {
   stamp() { tone(90, 0.3, { type: 'square', vol: 0.35, slide: -50 }); noise(0.12, { vol: 0.4 }); },
+  /** A heavy rubber stamp: whoosh down, THUNK, small rattle. `at` = delay in seconds. */
+  stampHit(at = 0) {
+    noise(0.14, { vol: 0.06, at: Math.max(0, at - 0.14) });
+    tone(70, 0.35, { type: 'square', vol: 0.5, slide: -40, at });
+    tone(140, 0.12, { type: 'triangle', vol: 0.35, slide: -90, at });
+    noise(0.09, { vol: 0.75, at });
+    noise(0.05, { vol: 0.25, at: at + 0.11 });
+  },
   drumroll(sec = 1.4) { for (let t = 0; t < sec; t += 0.05) noise(0.05, { vol: 0.08 + (t / sec) * 0.12, at: t }); },
   tada() { [523, 659, 784, 1046].forEach((f, i) => tone(f, 0.35, { type: 'triangle', vol: 0.25, at: i * 0.11 })); },
   sad() { [392, 370, 349, 262].forEach((f, i) => tone(f, 0.45, { type: 'sawtooth', vol: 0.12, at: i * 0.35 })); },

@@ -128,15 +128,29 @@ body.host { overflow: hidden; }
 .caret { animation: blink 1s infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 .sc-after { display: flex; flex-direction: column; gap: 10px; }
-.stamp-slot { position: absolute; left: 110px; top: 120px; pointer-events: none; }
-.stamp { font-family: var(--display); font-weight: 800; font-size: 86px; letter-spacing: 3px; border: 10px solid; border-radius: 26px; padding: 4px 30px 0; transform: rotate(-12deg); animation: stampIn .4s cubic-bezier(.3,1.6,.5,1) both; background: rgba(255,255,255,.88); text-align: center; line-height: 1; box-shadow: 0 8px 0 rgba(74,52,40,.2); }
-.stamp small { display: block; font-size: 30px; letter-spacing: 0; font-family: var(--body); font-weight: 900; margin: 2px 0 8px; }
+.stamp-slot { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; z-index: 2; }
+/* Rubber stamp: on the picture only, tilted 30°, slams down (sound: sfx.stampHit, timed to the 65% impact). */
+.stamp { font-family: var(--display); font-weight: 800; font-size: 74px; letter-spacing: 3px; border: 10px solid; border-radius: 24px; padding: 8px 30px 0; transform: rotate(-30deg); animation: stampIn .42s cubic-bezier(.5,0,.75,0) both, stampSettle .25s .27s ease-out; background: rgba(255,255,255,.82); text-align: center; line-height: .95; box-shadow: 0 8px 0 rgba(74,52,40,.2); max-width: 92%; mix-blend-mode: multiply; }
+.stamp small { display: block; font-size: 26px; letter-spacing: 0; font-family: var(--body); font-weight: 900; margin: 6px 0 10px; line-height: 1.1; }
 .stamp.ok { color: var(--green); border-color: var(--green); }
-.stamp.bad { color: var(--red); border-color: var(--red); font-size: 62px; }
-@keyframes stampIn { from { transform: rotate(-12deg) scale(3); opacity: 0; } 70% { transform: rotate(-12deg) scale(.94); } }
+.stamp.bad { color: var(--red); border-color: var(--red); }
+@keyframes stampIn { 0% { transform: rotate(-30deg) scale(3.2); opacity: 0; } 60% { opacity: 1; } 65% { transform: rotate(-30deg) scale(.92); } 100% { transform: rotate(-30deg) scale(1); } }
+@keyframes stampSettle { 0% { filter: blur(1.5px); } 100% { filter: none; } }
+.sc-pic.thud { animation: thud .3s .27s; }
+@keyframes thud { 25% { transform: translateY(6px) scale(.99); } 60% { transform: translateY(-2px); } }
+
+/* Failed clue: the whole screen goes grey; only the stamp and the buttons keep their colour. */
+body.host #viewport, .topbar, .rail, .spotlight, .scene-card, .sc-pic img, .sc-text > * { transition: filter .8s, background-color .8s, opacity .8s; }
+body.gloom #viewport { background-color: #e7e4e2; background-image: linear-gradient(#d9d5d2 2px, transparent 2px), linear-gradient(90deg, #d9d5d2 2px, transparent 2px); }
+body.gloom .topbar, body.gloom .rail, body.gloom .spotlight, body.gloom .sc-pic img,
+body.gloom .sc-head, body.gloom .sc-prev, body.gloom .sc-intro, body.gloom .sc-det, body.gloom .sc-report, body.gloom .fail-line { filter: grayscale(1) contrast(.85) brightness(.95); }
+body.gloom .sc-pic img { animation-play-state: paused; filter: grayscale(1) brightness(.75); }
+body.gloom .scene-card { background-color: #f1efed; }
+body.gloom .sc-intro, body.gloom .sc-prev { opacity: .7; }
 .fail-line { font-size: 24px; font-weight: 800; color: var(--red); }
 .pause-btns { display: flex; align-items: center; gap: 16px; }
-.beg-btn { background: var(--pink); font-size: 28px; padding: 12px 24px 10px; animation: pulse 1.6s infinite; }
+.beg-btn { background: var(--pink); font-size: 28px; padding: 12px 24px 10px; animation: begFlash .9s ease-in-out infinite; }
+@keyframes begFlash { 0%, 100% { background: var(--pink); transform: scale(1); box-shadow: 0 5px 0 var(--ink), 0 0 0 0 rgba(246,170,164,0); } 50% { background: #fff3a0; transform: scale(1.06); box-shadow: 0 5px 0 var(--ink), 0 0 0 12px rgba(246,170,164,.55); } }
 .fate-btn { background: #eee; font-size: 18px; padding: 6px 14px 4px; box-shadow: 0 3px 0 var(--ink); }
 .vocab-bonus { font-family: var(--display); font-weight: 800; color: var(--orange-d); font-size: 30px; animation: pop .45s cubic-bezier(.3,1.6,.5,1); }
 .cho-react { display: flex; gap: 12px; align-items: flex-start; animation: fadeUp .5s; }

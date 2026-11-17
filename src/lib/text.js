@@ -15,17 +15,20 @@ export function rich(text, glossary = []) {
     if (m) {
       return `<button type="button" class="chip phrase" data-phrase="${esc(m[2])}">${esc(m[1])}</button>`;
     }
-    let html = esc(part);
+    // One pass over all glossary terms (longest first), so a chip's own HTML is never scanned again
+    // (e.g. "banana peel" must not get a second chip for "peel" inside its data-en attribute).
+    const byKey = new Map();
+    for (const g of all) { const k = esc(g.en).toLowerCase(); if (!byKey.has(k)) byKey.set(k, g); }
+    if (!byKey.size) return esc(part);
     const used = new Set();
-    for (const g of all) {
-      const key = g.en.toLowerCase();
-      if (used.has(key)) continue;
-      const re = new RegExp(`(^|[^\\p{L}>])(${escapeRe(esc(g.en))}(?:s|es)?)(?=[^\\p{L}]|$)`, 'iu');
-      if (re.test(html)) {
-        html = html.replace(re, `$1<button type="button" class="chip gloss" data-en="${esc(g.en)}" data-vi="${esc(g.vi)}">$2</button>`);
-        used.add(key);
-      }
-    }
+    const re = new RegExp(`(^|[^\\p{L}])(${[...byKey.keys()].map(escapeRe).join('|')})((?:s|es)?)(?=[^\\p{L}]|$)`, 'giu');
+    const html = esc(part).replace(re, (m, pre, word, suf) => {
+      const k = word.toLowerCase();
+      const g = byKey.get(k);
+      if (!g || used.has(k)) return m;
+      used.add(k);
+      return `${pre}<button type="button" class="chip gloss" data-en="${esc(g.en)}" data-vi="${esc(g.vi)}">${word}${suf}</button>`;
+    });
     return html;
   }).join('');
 }
