@@ -273,7 +273,10 @@ function helpHTML() {
 // Vietnamese translation under the English story (toggle: VI button / L key; remembered on this computer).
 let showVi = (() => { try { return localStorage.getItem('csd-vi') !== 'off'; } catch { return true; } })();
 document.body.classList.toggle('no-vi', !showVi);
-const vi = (t, cls = '') => (t ? `<div class="vi-line ${cls}">${esc(t)}</div>` : '');
+// Dialogue: each speaker ("Hoa: "...", Chó: "...") and the narration after a quote starts on its own line.
+const talkParts = (t) => String(t || '').split(/\s+(?=[A-ZÀ-Ỹ][\p{L}]*:\s*["“])|(?<=["”])\s+(?=[A-ZÀ-Ỹ])/u).filter(Boolean);
+const talk = (t, gloss) => talkParts(t).map((x) => rich(x, gloss)).join('<br>');
+const vi = (t, cls = '') => (t ? `<div class="vi-line ${cls}">${talkParts(t).map(esc).join('<br>')}</div>` : '');
 function toggleVi() {
   showVi = !showVi;
   document.body.classList.toggle('no-vi', !showVi);
@@ -725,7 +728,7 @@ async function reviewScene(n, t, r) {
     keyHandlers = { g: () => {}, x: () => overturnLast(n, t), h: () => showHint(sc) };
   } else {
     stamp(true, true);
-    after.innerHTML = `<div class="cho-react"><img src="${assetUrl('assets/cho.png')}" alt=""><div class="bubble">${rich(sc.reaction, sc.glossary)}${vi(sc.reactionVi)}</div></div><div class="bridge">${rich(sc.bridge, sc.glossary)}${vi(sc.bridgeVi)}</div>`;
+    after.innerHTML = `<div class="cho-react"><img src="${assetUrl('assets/cho.png')}" alt=""><div class="bubble">${talk(sc.reaction, sc.glossary)}${vi(sc.reactionVi)}</div></div><div class="bridge">${rich(sc.bridge, sc.glossary)}${vi(sc.bridgeVi)}</div>`;
     keyHandlers = { g: () => doGotcha(n, t), x: () => {}, h: () => showHint(sc) };
   }
   fitReport();
@@ -809,7 +812,7 @@ async function playScene(n, t, { gotcha = false } = {}) {
   if (result === 'overridden') toast('X · Xin lỗi! Chó accepts the sentence.');
   if (fish) { addFish(1); after.innerHTML = '<div class="vocab-bonus">🐟 Vocab bonus!</div>'; }
   await wait(900);
-  after.insertAdjacentHTML('beforeend', `<div class="cho-react"><img src="${assetUrl('assets/cho.png')}" alt=""><div class="bubble">${rich(sc.reaction, sc.glossary)}${vi(sc.reactionVi)}</div></div>`);
+  after.insertAdjacentHTML('beforeend', `<div class="cho-react"><img src="${assetUrl('assets/cho.png')}" alt=""><div class="bubble">${talk(sc.reaction, sc.glossary)}${vi(sc.reactionVi)}</div></div>`);
   await setPub({ state: 'revealing' });
   keyHandlers = { g: () => doGotcha(n, t), x: () => {}, h: () => showHint(sc) };
   await wait(3200); if (!alive(t)) return false;
