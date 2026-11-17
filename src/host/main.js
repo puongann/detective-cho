@@ -1080,7 +1080,6 @@ async function runEnding() {
   $stage.innerHTML = `${topbar('<span class="state-tag">The truth</span>')}<main class="ending" id="ending">
     <h1>The votes...</h1><div class="tally">${SUSPECTS.map((s) => `<div class="t-row"><img src="${assetUrl(s.img)}" alt=""><span class="t-name">${esc(s.name)}</span><div class="t-bar"><div class="t-fill" data-w="${Math.round((tally[s.id] || 0) / cast * 100)}"></div></div><b>${tally[s.id] || 0}</b></div>`).join('')}</div></main>`;
   bindChrome();
-  sfx.drumroll(2);
   await wait(400);
   $stage.querySelectorAll('.t-fill').forEach((f) => { f.style.width = f.dataset.w + '%'; });
   await wait(2600); if (!alive(t)) return;

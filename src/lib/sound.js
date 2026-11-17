@@ -27,13 +27,23 @@ function noise(dur, { vol = 0.3, at = 0 } = {}) {
 }
 export const sfx = {
   stamp() { tone(90, 0.3, { type: 'square', vol: 0.35, slide: -50 }); noise(0.12, { vol: 0.4 }); },
-  /** A heavy rubber stamp: whoosh down, THUNK, small rattle. `at` = delay in seconds. */
+  /** A rubber stamp pressed on paper: a soft, muffled "thup" and a tiny paper tap. `at` = delay in seconds. */
   stampHit(at = 0) {
-    noise(0.14, { vol: 0.06, at: Math.max(0, at - 0.14) });
-    tone(70, 0.35, { type: 'square', vol: 0.5, slide: -40, at });
-    tone(140, 0.12, { type: 'triangle', vol: 0.35, slide: -90, at });
-    noise(0.09, { vol: 0.75, at });
-    noise(0.05, { vol: 0.25, at: at + 0.11 });
+    const c = ac(); if (!c || muted) return;
+    const t = c.currentTime + at;
+    const burst = (dur, decay, freq, q, vol, when) => {
+      const len = Math.floor(c.sampleRate * dur);
+      const b = c.createBuffer(1, len, c.sampleRate);
+      const d = b.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (len / decay));
+      const src = c.createBufferSource(); src.buffer = b;
+      const f = c.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = freq; f.Q.value = q;
+      const g = c.createGain(); g.gain.value = vol;
+      src.connect(f).connect(g).connect(c.destination); src.start(when);
+    };
+    burst(0.09, 5, 420, 0.8, 0.55, t);              // the rubber hits the desk: low and muffled
+    tone(95, 0.07, { type: 'sine', vol: 0.18, slide: -35, at });
+    burst(0.03, 4, 2400, 0.5, 0.06, t + 0.01);       // the paper
   },
   drumroll(sec = 1.4) { for (let t = 0; t < sec; t += 0.05) noise(0.05, { vol: 0.08 + (t / sec) * 0.12, at: t }); },
   /** One soft keyboard key: a quiet high "tick" plus a tiny low "clack" (a little different every time). */
