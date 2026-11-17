@@ -7,14 +7,14 @@ export const CHARACTERS = [
   { id: 'cho', name: 'Chó', img: 'assets/cho.png', line: 'An orange cat detective. On holiday. Loves fish and fish pâté. Please do not ask about the name.' },
   { id: 'hoa', name: 'Hoa', img: 'assets/characters/hoa.svg', line: 'Kind and sweet. Today is her big party with Nam.' },
   { id: 'nam', name: 'Nam', img: 'assets/characters/nam.svg', line: 'Black jacket, big smile. Always has an excuse.' },
-  { id: 'bin', name: 'Bin', img: 'assets/characters/bin.svg', line: 'Nam\'s best friend. Loves bananas and silly jokes.' },
+  { id: 'long', name: 'Long', img: 'assets/characters/long.svg', line: 'Nam\'s best friend. Loves bananas and silly jokes.' },
   { id: 'linh', name: 'Linh', img: 'assets/characters/linh.svg', line: 'Hoa\'s best friend. Very tall. She sees everything.' },
   { id: 'vy', name: 'Vy', img: 'assets/characters/vy.svg', line: 'The hotel singer. Loves pink and love songs.' },
 ];
 
 export const SUSPECTS = [
   { id: 'nam', name: 'Nam', img: 'assets/suspects/nam.svg', line: 'Big smile. Wet shoes. Flowers for no reason.' },
-  { id: 'bin', name: 'Bin', img: 'assets/suspects/bin.svg', line: 'Banana peel. Big jokes. Up a tree.' },
+  { id: 'long', name: 'Long', img: 'assets/suspects/long.svg', line: 'Banana peel. Big jokes. Up a tree.' },
   { id: 'linh', name: 'Linh', img: 'assets/suspects/linh.svg', line: 'Very tall. Sees everything. Too much?' },
   { id: 'hoa', name: 'Hoa', img: 'assets/suspects/hoa.svg', line: 'She lost her own ring? Strange...' },
   { id: 'nobody', name: 'Nobody', img: 'assets/suspects/nobody.svg', line: 'It is a big mistake. Everybody needs a hug.' },
@@ -66,10 +66,10 @@ export const QUIZ_REACTIONS = {
 
 // Bonus tips when no clue is lost and a quiz question passes.
 export const BONUS_TIPS = [
-  'Tip from Chó: Bin only wears flip-flops. Who wore party shoes?',
+  'Tip from Chó: Long only wears flip-flops. Who wore party shoes?',
   'Tip from Chó: Who in this hotel wears pink?',
   'Tip from Chó: "Love, N." Hoa never wears pink.',
-  'Tip from Chó: Bin was on his video at midnight. Who walked past?',
+  'Tip from Chó: Long was on his video at midnight. Who walked past?',
   'Tip from Chó: Who gave the ring to Hoa? Who can take it back?',
 ];
 
@@ -79,7 +79,7 @@ export const RECAP = [
   'It was not [[love at first sight|love-first-sight]]. It was love at first song.',
   'Nam [[lied to|lie-to]] Hoa. He told Vy, "I am single!"',
   'At midnight, he took the ring and gave it to Vy.',
-  'Wet party shoes, a pink feather, a wet letter. Poor Bin only made a video.',
+  'Wet party shoes, a pink feather, a wet letter. Poor Long only made a video.',
 ];
 
 // ---------------- WIN: the Sentencing Court ----------------
@@ -90,7 +90,7 @@ export const WIN = {
   apologies: [
     'I [[apologize to|apologize]] Hoa for [[cheating on|cheat-on]] her.',
     'I apologize to Vy for [[lying to|lie-to]] her.',
-    'I apologize to Bin for the banana problem.',
+    'I apologize to Long for the banana problem.',
   ],
   echo: 'Vy sings every line. Very loud. Very pink.',
   sentenceIntro: 'Step 2: The punishment. Boom, boom, boom!',
@@ -102,7 +102,7 @@ export const WIN = {
     'To make up for his mistake, Nam was made to say "Sorry, Hoa" in 50 languages.',
     'To make up for his mistake, Nam was ordered to wear a sign: "I [[let my fiancée down|let-down]]."',
     'To make up for his mistake, Nam was told to wash 500 cups with a toothbrush.',
-    'To make up for his mistake, Nam was made to eat 100 bananas with Bin.',
+    'To make up for his mistake, Nam was made to eat 100 bananas with Long.',
     'To make up for his mistake, Nam was ordered to clean the pool with a small cup.',
     'To make up for his mistake, Nam was told to sing 300 love songs for Hoa.',
     'To make up for his mistake, Nam was made to give Chó fish pâté for one year.',
@@ -113,17 +113,17 @@ export const WIN = {
   peaceIntro: 'Step 3: Friends again.',
   peace: [
     'Hoa [[breaks up with|break-up]] Nam. "You [[broke my heart|break-heart]]. Bye!"',
-    'Hoa [[forgives|forgive]] Bin for nothing. Bin did nothing! They [[make up|make-up]] and hug.',
+    'Hoa [[forgives|forgive]] Long for nothing. Long did nothing! They [[make up|make-up]] and hug.',
     'Hoa and Vy talk. Two ladies, one big mistake. Now they [[get on well with|get-on-well]] each other.',
-    'Surprise! Bin [[has feelings for|feelings-for]] Linh. They [[have a lot in common|lot-in-common]]: tall trees and bananas.',
-    'Bin [[proposes to|propose-to]] Linh with a banana ring. Linh [[falls in love with|fall-in-love]] him. Yes!',
+    'Surprise! Long [[has feelings for|feelings-for]] Linh. They [[have a lot in common|lot-in-common]]: tall trees and bananas.',
+    'Long [[proposes to|propose-to]] Linh with a banana ring. Linh [[falls in love with|fall-in-love]] him. Yes!',
     'Chó: "Make up = be friends again. Make up for = pay for a mistake."',
   ],
   epilogueIntro: 'Step 4: One month later...',
   epilogue: [
     'Vy [[has a crush on|crush-on]] Chó. Chó: "Sorry. I only love fish pâté."',
     'Nam [[goes out with|go-out-with]] his own face in the mirror. It does not talk back.',
-    'Bin and Linh are getting married next month. Chó brings the fish.',
+    'Long and Linh are getting married next month. Chó brings the fish.',
     'Hoa [[has a good relationship with|good-relationship]] everybody. And a new ring: from herself!',
   ],
   challengeTitle: 'Class challenge: give Nam some advice!',
@@ -142,7 +142,7 @@ export const LOSE = {
     'Nam and Vy run to the "Honeymoon Express" boat. With the ring!',
     'Hoa waves. She still [[trusts|trust]] him. "He will come back!"',
     'Nam and Vy [[have a rocky relationship|rocky-relationship]] from day one. Not our problem.',
-    'Bin and Linh [[fall out with|fall-out]] the whole class.',
+    'Long and Linh [[fall out with|fall-out]] the whole class.',
     'Chó [[has an argument with|argument]] his sun bed. The sun bed wins.',
   ],
   last: 'Chó: "Trust is good. Checking the feet is better."',

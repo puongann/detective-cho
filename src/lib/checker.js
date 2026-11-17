@@ -7,13 +7,14 @@ import { checkPhrase, findPhrases, tokens as phraseTokens } from './phrase-match
 import { VOCAB_BY_ID } from '../data/vocab.js';
 
 // Proper names that are always allowed (spelling) and must be capitalised.
-export const NAMES = ['Hoa', 'Nam', 'Bin', 'Linh', 'Vy', 'Chó', 'Cho', 'Sunflower'];
-// Story people: must be capitalised ("the bin" is still fine after a determiner).
-const ANIMAL_NAMES = new Set(['hoa', 'nam', 'bin', 'linh', 'vy']);
+export const NAMES = ['Hoa', 'Nam', 'Long', 'Linh', 'Vy', 'Chó', 'Cho', 'Sunflower'];
+// Story people: must be capitalised (after a determiner the word is fine: "the long feather").
+// "Long" is also an English word, so a small "long" is never flagged; a capital "Long" is always OK.
+const ANIMAL_NAMES = new Set(['hoa', 'nam', 'linh', 'vy']);
 const ALWAYS_CAPITAL = new Set(['chó', 'cho', 'i', 'pinocchio', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'vietnam', 'vietnamese', 'english', 'hanoi', 'mia']);
-const CAPITAL_OK = new Set([...ALWAYS_CAPITAL, ...ANIMAL_NAMES, 'sunflower', 'hotel', 'mr', 'mrs', 'miss', 'dear', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']);
+const CAPITAL_OK = new Set([...ALWAYS_CAPITAL, ...ANIMAL_NAMES, 'long', 'sunflower', 'hotel', 'mr', 'mrs', 'miss', 'dear', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']);
 // Story words that are fine even if the dictionary does not know them.
-export const STORY_WHITELIST = new Set(['hoa', 'nam', 'bin', 'linh', 'vy', 'flip', 'flops', 'chó', 'cho', 'pâté', 'pate', 'café', 'cafe', 'ok', 'okay', 'pinocchio', 'hanoi', 'mia', 'tiptoe', 'tiptoes', 'tiptoed', 'tiptoeing', 'pyjamas', 'pajamas', 'jeweller', 'jeweler', 'jewellery', 'jewelry', 'apologise', 'apologised', 'apologising', 'apologize', 'apologized', 'apologizing']);
+export const STORY_WHITELIST = new Set(['hoa', 'nam', 'long', 'linh', 'vy', 'flip', 'flops', 'chó', 'cho', 'pâté', 'pate', 'café', 'cafe', 'ok', 'okay', 'pinocchio', 'hanoi', 'mia', 'tiptoe', 'tiptoes', 'tiptoed', 'tiptoeing', 'pyjamas', 'pajamas', 'jeweller', 'jeweler', 'jewellery', 'jewelry', 'apologise', 'apologised', 'apologising', 'apologize', 'apologized', 'apologizing']);
 const DETERMINERS = new Set('the a an this that these those his her their our my your its every each one two some'.split(' '));
 const PREPOSITIONS = new Set('of in on under from with at near behind by for inside into to about'.split(' '));
 

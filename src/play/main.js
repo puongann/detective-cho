@@ -93,6 +93,9 @@ function resetGame() {
   } catch { /* storage blocked */ }
 }
 
+/** Faint key words inside the writing box: they stay while the student types. */
+const wordHintHTML = (sc) => (sc.wordHint ? `<span class="word-hint" aria-hidden="true">💡 ${esc(sc.wordHint)}</span>` : '');
+
 // ------------------------------------------------------------------ render dispatcher
 function render() {
   if (!paths) return;
@@ -223,7 +226,9 @@ function drawWriting() {
     <div class="advice" id="advice" ${sub.usedAdvice ? '' : 'hidden'}>🐟 <b>Chó's advice:</b><br>${esc(sc.verb)}<br>${esc(sc.frame)}</div>
     ${hintLvl ? `<div class="advice hint">💡 Hint from the teacher:<br>${sc.hints.slice(0, hintLvl).map(esc).join('<br>')}</div>` : ''}
     <div class="actions" id="actions">
-      <textarea id="txt" rows="2" maxlength="220" autocorrect="off" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="send" placeholder="${esc(pick(['Write your passive sentence...', 'The ___ was ___ ...', 'was / were + V3 ...']))}">${esc(draft)}</textarea>
+      <div class="txt-wrap">
+      <textarea id="txt" class="${sc.wordHint ? 'has-hint' : ''}" rows="2" maxlength="220" autocorrect="off" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="send" placeholder="${esc(pick(['Write your passive sentence...', 'The ___ was ___ ...', 'was / were + V3 ...']))}">${esc(draft)}</textarea>
+      ${wordHintHTML(sc)}</div>
       <button class="btn submit" id="submit">Submit 🔍</button>
       <div class="row-btns">
         <button class="link" id="askCho">Ask Chó for advice 🐟</button>
@@ -255,7 +260,11 @@ function goScene(i) {
   drawWriting();
 }
 
-function autoGrow(t) { t.style.height = 'auto'; t.style.height = Math.min(160, t.scrollHeight) + 'px'; }
+function autoGrow(t) {
+  // Keyboard open on a small screen: keep the box short so Submit stays above the keyboard (the box scrolls).
+  const cap = innerHeight <= 500 && innerWidth >= 600 ? 58 : document.body.classList.contains('typing') && innerWidth < 600 ? 72 : 160;
+  t.style.height = 'auto'; t.style.height = Math.min(cap, t.scrollHeight) + 'px';
+}
 
 function clean(s) { return s.replace(/[\r\n]+/g, ' ').replace(/\s+$/, '').replace(/^\s+/, ''); }
 
@@ -376,7 +385,9 @@ function viewFix() {
     <p class="prompt">Listen to your teacher. Fix your sentence!</p>
     ${hintLvl ? `<div class="advice hint">💡 ${sc.hints.slice(0, hintLvl).map(esc).join('<br>')}</div>` : ''}
     <div class="actions">
-      <textarea id="txt" rows="2" maxlength="220" autocorrect="off" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="send">${esc(last)}</textarea>
+      <div class="txt-wrap">
+      <textarea id="txt" class="${sc.wordHint ? 'has-hint' : ''}" rows="2" maxlength="220" autocorrect="off" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="send">${esc(last)}</textarea>
+      ${wordHintHTML(sc)}</div>
       <button class="btn submit" id="submit">Send the fix 🔍</button>
       <span class="status" id="status"></span>
     </div>
@@ -469,10 +480,10 @@ const headH = () => document.documentElement.style.setProperty('--headh', (docum
 const toTop = () => { if (document.body.classList.contains('typing') && innerWidth < 600) window.scrollTo(0, 0); };
 document.addEventListener('focusin', (e) => {
   if (e.target.tagName !== 'TEXTAREA') return;
-  document.body.classList.add('typing'); headH();
+  document.body.classList.add('typing'); headH(); autoGrow(e.target);
   if (innerWidth < 600) [80, 300, 600].forEach((ms) => setTimeout(toTop, ms));
   else setTimeout(() => e.target.scrollIntoView({ block: 'center', behavior: 'smooth' }), 250);
 });
-window.visualViewport?.addEventListener('resize', () => setTimeout(toTop, 50));
-document.addEventListener('focusout', (e) => { if (e.target.tagName === 'TEXTAREA') document.body.classList.remove('typing'); });
+window.visualViewport?.addEventListener('resize', () => { setTimeout(toTop, 50); const t = document.activeElement; if (t?.tagName === 'TEXTAREA') autoGrow(t); });
+document.addEventListener('focusout', (e) => { if (e.target.tagName === 'TEXTAREA') { document.body.classList.remove('typing'); autoGrow(e.target); } });
 void CHO_GAGS; void phraseCard;

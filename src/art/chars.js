@@ -242,14 +242,14 @@ export function nam(o = {}) {
   }, 'nam');
 }
 
-// ---------- Bin: bananas and jokes, orange cap, flip-flops ----------
-export function bin(o = {}) {
+// ---------- Long: bananas and jokes, orange cap, flip-flops ----------
+export function long(o = {}) {
   return person(o, {
     top: '#7ac36a', legs: SKIN, flipflops: true,
     outfit: (top, legH) => `<path d="M-50 ${-legH + 4} L -52 ${-legH + 30} L -6 ${-legH + 30} L 0 ${-legH + 14} L 6 ${-legH + 30} L 52 ${-legH + 30} L 50 ${-legH + 4} Z" fill="#4a7bd9" stroke="${L}" stroke-width="5" stroke-linejoin="round"/>${banana(0, top + 44, 0.45)}`,
     held: o.banana ? (hx, hy) => banana(hx + 6, hy - 26, 0.8) : null,
     hair: (cy, R) => `<path d="M${-R} ${cy - 6} L ${-R + 6} ${cy - 40} L ${-R + 26} ${cy - 30} L ${-R + 30} ${cy - 62} L -10 ${cy - 44} L 10 ${cy - 70} L 30 ${cy - 44} L ${R - 18} ${cy - 56} L ${R - 10} ${cy - 30} L ${R} ${cy - 6} Z" fill="#7a4b2a" stroke="${L}" stroke-width="5" stroke-linejoin="round"/><path d="M${-R + 4} ${cy - 30} Q 0 ${cy - R - 40} ${R - 4} ${cy - 30} Z" fill="#ff9f43" stroke="${L}" stroke-width="${W}" stroke-linejoin="round"/><path d="M${-R + 10} ${cy - 30} Q ${-R - 40} ${cy - 30} ${-R - 46} ${cy - 18} L ${-R + 6} ${cy - 18} Z" fill="#ff9f43" stroke="${L}" stroke-width="5" stroke-linejoin="round"/><circle cx="0" cy="${cy - R - 10}" r="7" fill="#ff9f43" stroke="${L}" stroke-width="4"/>`,
-  }, 'bin');
+  }, 'long');
 }
 export function banana(x, y, s = 1, peel = false) {
   if (peel) {

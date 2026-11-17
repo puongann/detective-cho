@@ -23,6 +23,7 @@ export const FIELDS = [
   ['previously', '"Last time" line', 'text', 'optional'],
   ['previouslyVi', '↳ Tiếng Việt ("last time")', 'text'],
   ['verb', 'Verb tip', 'text', 'e.g. give → given'],
+  ['wordHint', 'Faint hint in the phone box', 'text', 'e.g. ring / buy / by Nam (base verb: students change it)'],
   ['frame', 'Sentence frame (advice)', 'text'],
   ['hints', 'Hints 1-3 (one per line)', 'lines'],
   ['modelAnswers', 'Model answers (one per line)', 'lines', 'the first one is used for a restored clue'],

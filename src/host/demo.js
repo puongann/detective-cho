@@ -5,7 +5,7 @@ import { SCENES, SCENE_BY_N } from '../data/scenes.js';
 import { QUIZ } from '../data/quiz.js';
 import { SUSPECTS } from '../data/story.js';
 
-const NAMES = ['Lan', 'An', 'Minh', 'Thảo', 'Tuấn', 'Phúc', 'Huy', 'Mai', 'Khoa', 'Quân', 'Long', 'Trang', 'Đức', 'Ngọc', 'Bảo'];
+const NAMES = ['Lan', 'An', 'Minh', 'Thảo', 'Tuấn', 'Phúc', 'Huy', 'Mai', 'Khoa', 'Quân', 'Hải', 'Trang', 'Đức', 'Ngọc', 'Bảo'];
 
 // Typical learner mistakes.
 const MISTAKES = [
