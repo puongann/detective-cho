@@ -36,6 +36,20 @@ export const sfx = {
     noise(0.05, { vol: 0.25, at: at + 0.11 });
   },
   drumroll(sec = 1.4) { for (let t = 0; t < sec; t += 0.05) noise(0.05, { vol: 0.08 + (t / sec) * 0.12, at: t }); },
+  /** One soft keyboard key: a quiet high "tick" plus a tiny low "clack" (a little different every time). */
+  key() {
+    const c = ac(); if (!c || muted) return;
+    const t = c.currentTime;
+    const len = Math.floor(c.sampleRate * 0.025);
+    const b = c.createBuffer(1, len, c.sampleRate);
+    const d = b.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (len / 7));
+    const src = c.createBufferSource(); src.buffer = b;
+    const f = c.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 2600 + Math.random() * 1400; f.Q.value = 1.4;
+    const g = c.createGain(); g.gain.value = 0.11 + Math.random() * 0.04;
+    src.connect(f).connect(g).connect(c.destination); src.start(t);
+    tone(150 + Math.random() * 50, 0.03, { type: 'triangle', vol: 0.05 });
+  },
   tada() { [523, 659, 784, 1046].forEach((f, i) => tone(f, 0.35, { type: 'triangle', vol: 0.25, at: i * 0.11 })); },
   sad() { [392, 370, 349, 262].forEach((f, i) => tone(f, 0.45, { type: 'sawtooth', vol: 0.12, at: i * 0.35 })); },
   gavel() { tone(180, 0.15, { type: 'square', vol: 0.4, slide: -120 }); noise(0.08, { vol: 0.5 }); },

@@ -595,7 +595,6 @@ function spotlightFor(sc) {
 async function actCard(act, t) {
   const st = document.getElementById('sceneStage');
   st.innerHTML = `<div class="act-card"><div class="act-title">${esc(act.title)}</div><div class="act-sub">${esc(act.sub)}</div>${vi(act.subVi, 'act-vi')}</div>`;
-  sfx.drumroll(0.8);
   await wait(2600);
   return alive(t);
 }
@@ -628,13 +627,13 @@ async function typeSentence(text, t) {
   el.textContent = '';
   const rep = document.getElementById('scReport');
   if (rep) rep.style.fontSize = `${(text || '').length > 120 ? 19 : (text || '').length > 95 ? 21 : (text || '').length > 70 ? 23 : (text || '').length > 50 ? 25 : 28}px`;
-  sfx.drumroll(1.2);
   if (!text) { await wait(600); el.innerHTML = '<i class="muted">(nothing written)</i>'; return; }
   let skip = false;
   skipFn = () => { skip = true; };
   for (let i = 0; i < text.length && alive(t); i++) {
     if (skip) { el.textContent = text; break; }
     el.textContent = text.slice(0, i + 1);
+    if (text[i] !== ' ' && i % 2 === 0) sfx.key(); // soft keyboard clicks, not on every letter
     await new Promise((r) => setTimeout(r, 38 * SPEED));
   }
   skipFn = null;
