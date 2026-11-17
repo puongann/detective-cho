@@ -56,34 +56,34 @@ const S = {};
 
 S[1] = () => svg(`${hall()}
   <g transform="rotate(-3 800 260)"><rect x="300" y="200" width="1000" height="130" rx="10" fill="#fff8e7" stroke="${L}" stroke-width="6"/>${label(800, 290, 'HOA ♥ NAM', 78, '#e46f9f')}</g>
-  ${linh({ x: 420, y: 900, s: 1.35, mood: 'happy' })}
+  ${linh({ x: 420, y: 950, s: 1.0, mood: 'happy' })}
   <path d="M1360 430 L 1300 900 M1480 430 L 1540 900" stroke="#8a5a2b" stroke-width="14"/>${[500, 600, 700, 800].map((y) => `<path d="M${1355 - (y - 430) * 0.13 + 5} ${y} L ${1485 + (y - 430) * 0.13 - 5} ${y}" stroke="#8a5a2b" stroke-width="12"/>`).join('')}
-  ${long({ x: 1420, y: 560, s: 1.05, mood: 'happy', arms: 'up' })}
+  ${long({ x: 1420, y: 560, s: 1.0, mood: 'happy', arms: 'up' })}
   ${balloon(560, 470, '#ff6b8b', 0.9)}${balloon(660, 440, '#5fb6e8', 0.9)}${balloon(1040, 450, '#ffd84d', 0.9)}${balloon(1140, 480, '#7ac36a', 0.9)}
   ${flowers(800, 690, 0.9)}
-  ${hoa({ x: 640, y: 960, s: 0.85, mood: 'happy' })}${nam({ x: 960, y: 960, s: 0.85, mood: 'happy' })}
+  ${hoa({ x: 640, y: 960, s: 1.0, mood: 'happy' })}${nam({ x: 960, y: 960, s: 1.0, mood: 'happy' })}
   ${heart(800, 600, 26)}
   ${sunbed(190, 975, 0.85)}${cho({ x: 110, y: 950, s: 0.7, mood: 'sleep', lying: true })}${sign(150, 760, 'ON HOLIDAY', 0.85)}
   ${timeTag('Fri 5 p.m.')}`);
 
 S[2] = () => svg(`${hall()}
-  ${hoa({ x: 520, y: 900, s: 1.35, mood: 'love', arms: 'cheeks' })}
+  ${hoa({ x: 520, y: 940, s: 1.15, mood: 'love', arms: 'cheeks' })}
   ${nam({ x: 960, y: 940, s: 1.15, mood: 'happy', wings: 'give' })}
   <g transform="translate(1110 760)">${ringBox(0, 0, 1.3)}</g>
   ${sparkle(1050, 620, 2)}${sparkle(1190, 640, 1.4)}${sparkle(1120, 560, 1.1)}
   ${heart(420, 380, 30)}${heart(620, 340, 22)}${heart(520, 300, 16)}
-  ${long({ x: 1380, y: 940, s: 0.9, mood: 'happy', arms: 'up' })}${label(1320, 560, 'CLAP CLAP!', 40, '#e46f9f')}
-  ${linh({ x: 180, y: 960, s: 1.1, mood: 'happy' })}
-  ${cho({ x: 1520, y: 980, s: 0.45, mood: 'happy' })}
+  ${long({ x: 1380, y: 950, s: 1.15, mood: 'happy', arms: 'up' })}${label(1320, 560, 'CLAP CLAP!', 40, '#e46f9f')}
+  ${linh({ x: 180, y: 960, s: 1.15, mood: 'happy' })}
+  ${cho({ x: 1530, y: 985, s: 0.55, mood: 'happy' })}
   ${timeTag('Fri 7 p.m.', true)}`);
 
 S[3] = () => svg(`${hall({ night: true, stage: true })}
-  ${vy({ x: 1270, y: 700, s: 1.25, mood: 'happy', mic: true })}
+  ${vy({ x: 1270, y: 700, s: 1.0, mood: 'happy', mic: true })}
   ${['♪', '♫', '♪', '♥'].map((n, i) => anim('float', label(1000 + i * 140, 300 + (i % 2) * 60, n, 70, i === 3 ? '#ff6b8b' : '#ffd84d'), -i * 0.7)).join('')}
   <g transform="translate(470 880)">${[0, 1, 2, 3, 4].map((i) => `<rect x="${-200 + i * 25}" y="${-90 - i * 90}" width="${400 - i * 50}" height="90" rx="12" fill="${i % 2 ? '#fff8e7' : '#ffd6e5'}" stroke="${L}" stroke-width="6"/>`).join('')}${[-60, 0, 60].map((x) => banana(x, -490, 0.9)).join('')}</g>
   ${long({ x: 160, y: 960, s: 1.0, mood: 'happy', arms: 'up' })}
-  ${nam({ x: 820, y: 960, s: 0.95, mood: 'love' })}
-  ${hoa({ x: 690, y: 980, s: 0.7, mood: 'happy' })}
+  ${nam({ x: 870, y: 960, s: 1.0, mood: 'love' })}
+  ${hoa({ x: 725, y: 975, s: 1.0, mood: 'happy' })}
   ${timeTag('Fri 9 p.m.', true)}`);
 
 S[4] = () => svg(`${room()}
@@ -111,10 +111,10 @@ S[6] = () => svg(`${room({ curtainsBlow: true })}
   ${timeTag('Sat 7:20 a.m.')}`);
 
 S[7] = () => svg(`${garden()}
-  ${long({ x: 800, y: 900, s: 1.35, mood: 'sweat', arms: 'hold', banana: true })}
+  ${long({ x: 800, y: 950, s: 1.1, mood: 'sweat', arms: 'hold', banana: true })}
   ${hoa({ x: 260, y: 960, s: 1.1, mood: 'angry', arms: 'point' })}
-  ${linh({ x: 1240, y: 980, s: 1.05, mood: 'angry', flip: true })}
-  ${nam({ x: 520, y: 990, s: 0.85, mood: 'sly', wings: 'point', flip: true })}
+  ${linh({ x: 1240, y: 980, s: 1.1, mood: 'angry', flip: true })}
+  ${nam({ x: 520, y: 990, s: 1.1, mood: 'sly', wings: 'point', flip: true })}
   ${bubble(380, 80, 760, 150, 'YOU took the ring!', { tx: 600, ty: 330, size: 66 })}
   ${[0, 1, 2].map((i) => `<path d="M${690 - i * 20} ${560 + i * 30} l -40 0 M${910 + i * 20} ${560 + i * 30} l 40 0" stroke="${L}" stroke-width="6"/>`).join('')}
   ${timeTag('Sat 8 a.m.')}`);
@@ -183,7 +183,7 @@ S[12] = () => svg(`${pool()}
   ${timeTag('Sat 3 p.m.')}`);
 
 S[13] = () => svg(`${hall()}
-  ${nam({ x: 1100, y: 960, s: 1.5, mood: 'sweat', wings: 'up' })}
+  ${nam({ x: 1100, y: 960, s: 1.3, mood: 'sweat', wings: 'up' })}
   ${cho({ x: 420, y: 960, s: 1.1, mood: 'grumpy', wave: true })}
   ${feather(520, 810, 1.3, 20)}
   <g transform="translate(300 830) rotate(-10)"><rect x="-80" y="-50" width="160" height="100" fill="#fdf6e3" stroke="${L}" stroke-width="5"/>${label(0, 10, 'Love, N', 28, '#2a4ea0')}</g>
@@ -200,12 +200,12 @@ S[14] = () => svg(`${hall()}
   ${timeTag('Sat 7 p.m.', true)}`);
 
 S[15] = () => svg(`${hall({ night: true, stage: true })}
-  ${vy({ x: 1240, y: 700, s: 1.3, mood: 'love', wing: 'up', ring: true })}
+  ${vy({ x: 1240, y: 700, s: 1.0, mood: 'love', wing: 'up', ring: true })}
   ${heartBalloon(1460, 330, 0.9, 'N + V')}
   ${sparkle(1100, 330, 2.4)}${sparkle(1180, 420, 1.4)}
-  ${hoa({ x: 300, y: 960, s: 1.15, mood: 'shock', arms: 'cheeks' })}
-  ${long({ x: 580, y: 980, s: 0.85, mood: 'shock' })}
-  ${nam({ x: 820, y: 990, s: 0.8, mood: 'sweat', flip: true })}${label(760, 660, '← sneak...', 34, '#fff')}
+  ${hoa({ x: 300, y: 975, s: 1.0, mood: 'shock', arms: 'cheeks' })}
+  ${long({ x: 560, y: 980, s: 1.0, mood: 'shock' })}
+  ${nam({ x: 820, y: 990, s: 1.0, mood: 'sweat', flip: true })}${label(760, 660, '← sneak...', 34, '#fff')}
   ${cho({ x: 90, y: 990, s: 0.5, mood: 'shock', wave: false })}
   ${bubble(700, 110, 560, 120, 'Nam gave it to me!', { tx: 1100, ty: 330, size: 42 })}
   ${timeTag('Sat 9 p.m.', true)}`);
@@ -216,8 +216,8 @@ const court = () => svg(`<rect width="1600" height="1000" fill="#e9d2a6"/><rect 
   ${cho({ x: 800, y: 470, s: 0.9, mood: 'grumpy', wave: false, wig: true })}
   <g transform="translate(960 300) rotate(-30)"><rect x="-8" y="0" width="16" height="120" fill="#6b4b2b"/><path d="M-60 -20 Q 0 -60 60 -20 L 80 -40 L 80 20 L 60 0 Q 0 40 -60 0 Z" fill="#7fb7e6" stroke="${L}" stroke-width="5"/><circle cx="-36" cy="-12" r="5" fill="${L}"/></g>
   <rect x="1180" y="620" width="300" height="160" fill="#a87a4c" stroke="${L}" stroke-width="6"/>
-  ${nam({ x: 1330, y: 660, s: 0.9, mood: 'sad' })}
-  ${hoa({ x: 140, y: 980, s: 0.75, mood: 'angry' })}${vy({ x: 400, y: 980, s: 0.65, mood: 'angry' })}${long({ x: 1020, y: 990, s: 0.6, mood: 'happy' })}${linh({ x: 1540, y: 990, s: 0.55, mood: 'happy', flip: true })}
+  ${nam({ x: 1330, y: 660, s: 0.8, mood: 'sad' })}
+  ${hoa({ x: 140, y: 980, s: 0.7, mood: 'angry' })}${vy({ x: 380, y: 980, s: 0.7, mood: 'angry' })}${long({ x: 1040, y: 990, s: 0.7, mood: 'happy' })}${linh({ x: 1530, y: 990, s: 0.7, mood: 'happy', flip: true })}
   `);
 
 const lose = () => svg(`${pool({ night: false })}
@@ -226,7 +226,7 @@ const lose = () => svg(`${pool({ night: false })}
   <g transform="translate(1050 640)"><path d="M-330 0 L 330 0 L 260 120 L -260 120 Z" fill="#fff" stroke="${L}" stroke-width="8"/>${label(0, 80, 'HONEYMOON EXPRESS', 40, '#e46f9f')}
   ${nam({ x: -120, y: 0, s: 0.8, mood: 'happy', wings: 'up' })}${vy({ x: 120, y: 0, s: 0.8, mood: 'love', wing: 'up', ring: true })}${heartBalloon(250, -380, 0.6, 'N + V')}</g>
   <rect x="0" y="660" width="460" height="60" fill="#8a5a2b" stroke="${L}" stroke-width="6"/>
-  ${hoa({ x: 220, y: 680, s: 0.75, mood: 'cry', arms: 'up' })}
+  ${hoa({ x: 220, y: 680, s: 0.8, mood: 'cry', arms: 'up' })}
   ${sunbed(300, 980, 0.8)}${cho({ x: 120, y: 980, s: 0.55, mood: 'angry' })}
   ${bubble(40, 760, 260, 80, 'GRR!', { size: 40 })}
   ${label(1050, 180, 'Bye bye!', 80, '#e46f9f')}`);
@@ -234,11 +234,11 @@ const lose = () => svg(`${pool({ night: false })}
 // ---------------- portraits ----------------
 const portrait = (body, bg = '#f3e4c4') => svg(`<rect width="400" height="400" rx="40" fill="${bg}"/>${body}`, 400, 400);
 const P = {
-  hoa: () => portrait(hoa({ x: 200, y: 520, s: 1.3, mood: 'happy' })),
-  nam: () => portrait(nam({ x: 200, y: 490, s: 1.25, mood: 'sly' })),
+  hoa: () => portrait(hoa({ x: 200, y: 500, s: 1.3, mood: 'happy' })),
+  nam: () => portrait(nam({ x: 200, y: 500, s: 1.3, mood: 'sly' })),
   long: () => portrait(long({ x: 200, y: 500, s: 1.3, mood: 'happy', banana: true })),
-  linh: () => portrait(linh({ x: 200, y: 560, s: 1.1, mood: 'happy' })),
-  vy: () => portrait(vy({ x: 250, y: 500, s: 1.1, mood: 'happy' })),
+  linh: () => portrait(linh({ x: 200, y: 604, s: 1.3, mood: 'happy' })),
+  vy: () => portrait(vy({ x: 200, y: 500, s: 1.3, mood: 'happy' })),
   cho: () => portrait(cho({ x: 200, y: 440, s: 1.25, mood: 'happy' })),
   nobody: () => portrait(`${heart(200, 190, 110, '#ff8fb1')}${label(200, 215, 'HUG!', 60, '#fff')}${label(200, 360, '?', 70, L)}`),
 };
