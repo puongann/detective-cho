@@ -74,6 +74,7 @@ let storyJson = 'null';
 function onPub() {
   const sj = JSON.stringify(S.pub.story || null);
   if (sj !== storyJson) { storyJson = sj; applyStory(S.pub.story); } // teacher's story edits (lobby only)
+  if ((S.pub.state || 'lobby') === 'lobby') resetGame();
   if (S.pub.assign) syncMySubs();
   // "Your scene is next!" alert
   if (S.pub.state === 'revealing' || S.pub.state === 'paused') {
@@ -81,6 +82,15 @@ function onPub() {
     if (myScenes().includes(next) && !S.alerted[next]) { S.alerted[next] = true; buzz([100, 80, 100]); }
   }
   render();
+}
+
+// The teacher stopped the game (or it has not started): forget last game's votes, answers and drafts.
+function resetGame() {
+  S.myVote = null; S.quizAns = {}; S.alerted = {};
+  try {
+    for (let i = localStorage.length - 1; i >= 0; i--) { const k = localStorage.key(i); if (k?.startsWith(`csd-draft-${S.code}-`)) localStorage.removeItem(k); }
+    sessionStorage.removeItem('csd-idx');
+  } catch { /* storage blocked */ }
 }
 
 // ------------------------------------------------------------------ render dispatcher

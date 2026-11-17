@@ -99,8 +99,13 @@ async function setPub(patch) {
 }
 const saveVerdicts = () => db.update(paths.hostData, { verdicts: G.verdicts, settings: G.settings });
 
+// The stage is always 1600 wide; its height follows the screen shape (900 for 16:9, up to 1200 for 4:3 / 16:10 laptops)
+// so a laptop is filled edge to edge instead of letterboxed.
 function fitStage() {
-  const s = Math.min(innerWidth / 1600, innerHeight / 900);
+  const h = Math.round(Math.max(900, Math.min(1200, (1600 * innerHeight) / innerWidth)));
+  $stage.style.height = `${h}px`;
+  $stage.style.setProperty('--stage-h', `${h}px`);
+  const s = Math.min(innerWidth / 1600, innerHeight / h);
   $stage.style.transform = `translate(-50%, -50%) scale(${s})`;
 }
 
@@ -143,6 +148,7 @@ function topbar(extra = '') {
       <button class="tb-btn" data-act="mute" title="Sound (M)">${isMuted() ? '🔇' : '🔊'}</button>
       <button class="tb-btn" data-act="help" title="Keys (?)">?</button>
       <button class="tb-btn" data-act="story" title="Settings: edit the story (E)">⚙️</button>
+      ${G.pub.state && G.pub.state !== 'lobby' ? '<button class="tb-btn restart" data-act="restart" title="Stop this game / start again">↺</button>' : ''}
     </div>
   </header>`;
 }
@@ -155,6 +161,7 @@ function chromeAction(a) {
   if (a === 'board') toggleOverlay('board');
   if (a === 'help') toggleOverlay('help');
   if (a === 'story') openStoryEditor();
+  if (a === 'restart') toggleOverlay('restart');
   if (a === 'mute') { setMuted(!isMuted()); document.querySelectorAll('[data-act=mute]').forEach((b) => { b.textContent = isMuted() ? '🔇' : '🔊'; }); }
 }
 function addFish(k = 1) {
@@ -201,14 +208,38 @@ function toggleOverlay(name) {
   overlay = name;
   const o = document.createElement('div');
   o.className = 'overlay';
+  toggleOverlay.el = o;
   let inner = '';
   if (name === 'vault') inner = vaultHTML();
   if (name === 'board') inner = boardHTML();
   if (name === 'help') inner = helpHTML();
+  if (name === 'restart') inner = restartHTML();
   o.innerHTML = `<div class="overlay-card ${name}">${inner}<button class="close-x" aria-label="Close">✕</button></div>`;
   o.querySelector('.close-x').onclick = () => toggleOverlay(name);
   o.addEventListener('click', (e) => { if (e.target === o) toggleOverlay(name); });
+  if (name === 'restart') {
+    o.querySelector('#rsKeep').onclick = () => toggleOverlay('restart');
+    o.querySelector('#rsGo').onclick = () => { toggleOverlay('restart'); replay(); };
+    o.querySelector('#rsNew').onclick = () => { localStorage.removeItem(`csd-host-room-${db.mode}`); location.search = DEMO ? '?demo=1' : ''; };
+  }
   $stage.appendChild(o);
+}
+// A scene change re-renders the whole stage; put an open overlay (board, vault, stop dialog...) back on top.
+new MutationObserver(() => {
+  if (!overlay || overlay === 'reassign') return;
+  const o = overlayEl();
+  if (o && !o.isConnected) { o.classList.add('still'); $stage.appendChild(o); }
+}).observe($stage, { childList: true });
+function overlayEl() { return toggleOverlay.el; }
+
+function restartHTML() {
+  return `<h2>↺ Stop this game?</h2>
+  <p class="rs-text">All sentences, clues, votes and 🐟 are cleared. Students stay in the room and go back to the lobby.</p>
+  <div class="rs-btns">
+    <button class="big-btn alt" id="rsKeep">Keep playing</button>
+    <button class="big-btn pulse" id="rsGo">↺ Start again from the beginning</button>
+  </div>
+  <button class="link-btn rs-new" id="rsNew">or open a new room (everyone joins again)</button>`;
 }
 
 function vaultHTML() {
@@ -229,6 +260,7 @@ function helpHTML() {
   <div><kbd>T</kbd> show / hide checker reasons (teacher only)</div>
   <div><kbd>B</kbd> Case Board · <kbd>V</kbd> Vocab Vault · <kbd>M</kbd> sound</div>
   <div><kbd>E</kbd> ⚙️ edit the story (lobby only)</div>
+  <div>↺ (top right) stop the game and start again from the lobby</div>
   </div>
   <p class="muted">${esc(pick(CHO_GAGS))}</p>`;
 }
@@ -889,6 +921,7 @@ async function nextQuestion(i) {
   };
   quizWatch();
   const tick = setInterval(() => {
+    if (!alive(t)) return clearInterval(tick);
     const left = endsAt - db.now();
     const el = document.getElementById('qTimer');
     if (el) { el.textContent = Math.max(0, Math.ceil(left / 1000)); el.classList.toggle('red', left < 6000); }
@@ -1057,6 +1090,11 @@ function recap() {
 
 async function replay() {
   flowToken++;
+  clearInterval(writeTimer); clearInterval(msgTimer);
+  fixWatch = null; quizWatch = null; keyHandlers = {};
+  if (skipFn) skipFn();
+  document.querySelector('.overlay')?.remove(); overlay = null;
+  setGloom(false);
   await Promise.all([db.remove(paths.subs), db.remove(paths.votes), db.remove(paths.answers), db.set(paths.hostData, { settings: G.settings })]);
   G.verdicts = {}; G.fish = 0; G.subs = {}; G.votes = {}; G.answers = {}; hintLevel = {};
   await db.set(paths.pub, { ...freshPub(), writeSecs: G.settings.writeSecs });
