@@ -1,22 +1,22 @@
 // Characters, suspects, endings and funny lines for "The Missing Ring at Sunflower Hotel".
 // All player-facing text: A1-A2 words, short sentences (checked by scripts/lint-level.js).
 
-export const CHEATER = 'penguin';
+export const CHEATER = 'nam';
 
 export const CHARACTERS = [
   { id: 'cho', name: 'Chó', img: 'assets/cho.png', line: 'An orange cat detective. On holiday. Loves fish and fish pâté. Please do not ask about the name.' },
-  { id: 'panda', name: 'Panda', img: 'assets/characters/panda.svg', line: 'Kind and sweet. Today is her big party with Penguin.' },
-  { id: 'penguin', name: 'Penguin', img: 'assets/characters/penguin.svg', line: 'Black jacket, big smile. Always has an excuse.' },
-  { id: 'monkey', name: 'Monkey', img: 'assets/characters/monkey.svg', line: 'Penguin\'s best friend. Loves bananas and silly jokes.' },
-  { id: 'giraffe', name: 'Giraffe', img: 'assets/characters/giraffe.svg', line: 'Panda\'s best friend. Long neck. She sees everything.' },
-  { id: 'flamingo', name: 'Flamingo', img: 'assets/characters/flamingo.svg', line: 'The pink hotel singer. Loves love songs.' },
+  { id: 'hoa', name: 'Hoa', img: 'assets/characters/hoa.svg', line: 'Kind and sweet. Today is her big party with Nam.' },
+  { id: 'nam', name: 'Nam', img: 'assets/characters/nam.svg', line: 'Black jacket, big smile. Always has an excuse.' },
+  { id: 'bin', name: 'Bin', img: 'assets/characters/bin.svg', line: 'Nam\'s best friend. Loves bananas and silly jokes.' },
+  { id: 'linh', name: 'Linh', img: 'assets/characters/linh.svg', line: 'Hoa\'s best friend. Very tall. She sees everything.' },
+  { id: 'vy', name: 'Vy', img: 'assets/characters/vy.svg', line: 'The hotel singer. Loves pink and love songs.' },
 ];
 
 export const SUSPECTS = [
-  { id: 'penguin', name: 'Penguin', img: 'assets/suspects/penguin.svg', line: 'Big smile. Wet feet. Flowers for no reason.' },
-  { id: 'monkey', name: 'Monkey', img: 'assets/suspects/monkey.svg', line: 'Banana peel. Big jokes. Up a tree.' },
-  { id: 'giraffe', name: 'Giraffe', img: 'assets/suspects/giraffe.svg', line: 'Long neck. Sees everything. Too much?' },
-  { id: 'panda', name: 'Panda', img: 'assets/suspects/panda.svg', line: 'She lost her own ring? Strange...' },
+  { id: 'nam', name: 'Nam', img: 'assets/suspects/nam.svg', line: 'Big smile. Wet shoes. Flowers for no reason.' },
+  { id: 'bin', name: 'Bin', img: 'assets/suspects/bin.svg', line: 'Banana peel. Big jokes. Up a tree.' },
+  { id: 'linh', name: 'Linh', img: 'assets/suspects/linh.svg', line: 'Very tall. Sees everything. Too much?' },
+  { id: 'hoa', name: 'Hoa', img: 'assets/suspects/hoa.svg', line: 'She lost her own ring? Strange...' },
   { id: 'nobody', name: 'Nobody', img: 'assets/suspects/nobody.svg', line: 'It is a big mistake. Everybody needs a hug.' },
 ];
 
@@ -66,71 +66,71 @@ export const QUIZ_REACTIONS = {
 
 // Bonus tips when no clue is lost and a quiz question passes.
 export const BONUS_TIPS = [
-  'Tip from Chó: Penguins have flat feet. Monkeys have long toes.',
-  'Tip from Chó: Who in this hotel is pink?',
-  'Tip from Chó: "Love, P." Panda is not pink.',
-  'Tip from Chó: Monkey was on his video at midnight. Who walked past?',
-  'Tip from Chó: Who gave the ring to Panda? Who can take it back?',
+  'Tip from Chó: Bin only wears flip-flops. Who wore party shoes?',
+  'Tip from Chó: Who in this hotel wears pink?',
+  'Tip from Chó: "Love, N." Hoa never wears pink.',
+  'Tip from Chó: Bin was on his video at midnight. Who walked past?',
+  'Tip from Chó: Who gave the ring to Hoa? Who can take it back?',
 ];
 
 // Short true story for the final recap (4-5 lines).
 export const RECAP = [
-  'Two months ago, Penguin [[struck up a conversation|strike-up]] with Flamingo, the hotel singer.',
+  'Two months ago, Nam [[struck up a conversation|strike-up]] with Vy, the hotel singer.',
   'It was not [[love at first sight|love-first-sight]]. It was love at first song.',
-  'Penguin [[lied to|lie-to]] Panda. He told Flamingo, "I am single!"',
-  'At midnight, he took the ring and gave it to Flamingo.',
-  'Wet flat feet, a pink feather, a wet letter. Poor Monkey only made a video.',
+  'Nam [[lied to|lie-to]] Hoa. He told Vy, "I am single!"',
+  'At midnight, he took the ring and gave it to Vy.',
+  'Wet party shoes, a pink feather, a wet letter. Poor Bin only made a video.',
 ];
 
 // ---------------- WIN: the Sentencing Court ----------------
 export const WIN = {
   banner: 'CASE SOLVED! All detectives are now Chief Inspectors!',
-  court: 'Chó is the judge. He has a tiny wig and a fish hammer. Penguin stands in front of him.',
-  apologyIntro: 'Step 1: Penguin must say sorry.',
+  court: 'Chó is the judge. He has a tiny wig and a fish hammer. Nam stands in front of him.',
+  apologyIntro: 'Step 1: Nam must say sorry.',
   apologies: [
-    'I [[apologize to|apologize]] Panda for [[cheating on|cheat-on]] her.',
-    'I apologize to Flamingo for [[lying to|lie-to]] her.',
-    'I apologize to Monkey for the banana problem.',
+    'I [[apologize to|apologize]] Hoa for [[cheating on|cheat-on]] her.',
+    'I apologize to Vy for [[lying to|lie-to]] her.',
+    'I apologize to Bin for the banana problem.',
   ],
-  echo: 'Flamingo sings every line. Very loud. Very pink.',
+  echo: 'Vy sings every line. Very loud. Very pink.',
   sentenceIntro: 'Step 2: The punishment. Boom, boom, boom!',
   // Passive on purpose: the students' target structure. {MUF} = make up for chip.
   punishments: [
-    'To [[make up for|make-up-for]] his mistake, Penguin was made to pay Panda 2 million dollars.',
-    'To make up for his mistake, Penguin was ordered to carry Panda\'s shopping bags for 100 days.',
-    'To make up for his mistake, Penguin was told to write "I will [[be faithful|faithful]]" 10,000 times.',
-    'To make up for his mistake, Penguin was made to say "Sorry, Panda" in 50 languages.',
-    'To make up for his mistake, Penguin was ordered to wear a sign: "I [[let my fiancée down|let-down]]."',
-    'To make up for his mistake, Penguin was told to wash 500 cups with a toothbrush.',
-    'To make up for his mistake, Penguin was made to eat 100 bananas with Monkey.',
-    'To make up for his mistake, Penguin was ordered to clean the pool with his wings.',
-    'To make up for his mistake, Penguin was told to sing 300 love songs for Panda.',
-    'To make up for his mistake, Penguin was made to give Chó fish pâté for one year.',
-    'To make up for his mistake, Penguin was ordered to sleep on Chó\'s sun bed. Outside. In winter.',
-    'To make up for his mistake, Penguin was told to say sorry to the North Pole.',
-    'To make up for his mistake, Penguin was made to dance with Giraffe for 24 hours.',
+    'To [[make up for|make-up-for]] his mistake, Nam was made to pay Hoa 2 million dollars.',
+    'To make up for his mistake, Nam was ordered to carry Hoa\'s shopping bags for 100 days.',
+    'To make up for his mistake, Nam was told to write "I will [[be faithful|faithful]]" 10,000 times.',
+    'To make up for his mistake, Nam was made to say "Sorry, Hoa" in 50 languages.',
+    'To make up for his mistake, Nam was ordered to wear a sign: "I [[let my fiancée down|let-down]]."',
+    'To make up for his mistake, Nam was told to wash 500 cups with a toothbrush.',
+    'To make up for his mistake, Nam was made to eat 100 bananas with Bin.',
+    'To make up for his mistake, Nam was ordered to clean the pool with a small cup.',
+    'To make up for his mistake, Nam was told to sing 300 love songs for Hoa.',
+    'To make up for his mistake, Nam was made to give Chó fish pâté for one year.',
+    'To make up for his mistake, Nam was ordered to sleep on Chó\'s sun bed. Outside. In winter.',
+    'To make up for his mistake, Nam was told to say sorry to every flower in the garden.',
+    'To make up for his mistake, Nam was made to dance with Linh for 24 hours.',
   ],
   peaceIntro: 'Step 3: Friends again.',
   peace: [
-    'Panda [[breaks up with|break-up]] Penguin. "You [[broke my heart|break-heart]]. Bye!"',
-    'Panda [[forgives|forgive]] Monkey for nothing. Monkey did nothing! They [[make up|make-up]] and hug.',
-    'Panda and Flamingo talk. Two ladies, one big mistake. Now they [[get on well with|get-on-well]] each other.',
-    'Surprise! Monkey [[has feelings for|feelings-for]] Giraffe. They [[have a lot in common|lot-in-common]]: tall trees and bananas.',
-    'Monkey [[proposes to|propose-to]] Giraffe with a banana ring. Giraffe [[falls in love with|fall-in-love]] him. Yes!',
+    'Hoa [[breaks up with|break-up]] Nam. "You [[broke my heart|break-heart]]. Bye!"',
+    'Hoa [[forgives|forgive]] Bin for nothing. Bin did nothing! They [[make up|make-up]] and hug.',
+    'Hoa and Vy talk. Two ladies, one big mistake. Now they [[get on well with|get-on-well]] each other.',
+    'Surprise! Bin [[has feelings for|feelings-for]] Linh. They [[have a lot in common|lot-in-common]]: tall trees and bananas.',
+    'Bin [[proposes to|propose-to]] Linh with a banana ring. Linh [[falls in love with|fall-in-love]] him. Yes!',
     'Chó: "Make up = be friends again. Make up for = pay for a mistake."',
   ],
   epilogueIntro: 'Step 4: One month later...',
   epilogue: [
-    'Flamingo [[has a crush on|crush-on]] Chó. Chó: "Sorry. I only love fish pâté."',
-    'Penguin [[goes out with|go-out-with]] his own face in the ice. It does not talk back.',
-    'Monkey and Giraffe are getting married next month. Chó brings the fish.',
-    'Panda [[has a good relationship with|good-relationship]] everybody. And a new ring: from herself!',
+    'Vy [[has a crush on|crush-on]] Chó. Chó: "Sorry. I only love fish pâté."',
+    'Nam [[goes out with|go-out-with]] his own face in the mirror. It does not talk back.',
+    'Bin and Linh are getting married next month. Chó brings the fish.',
+    'Hoa [[has a good relationship with|good-relationship]] everybody. And a new ring: from herself!',
   ],
-  challengeTitle: 'Class challenge: give Penguin some advice!',
+  challengeTitle: 'Class challenge: give Nam some advice!',
   challenge: [
     'You should apologize to ___ for ___ing.',
-    'Penguin must make up for ___.',
-    'Panda should (not) trust ___.',
+    'Nam must make up for ___.',
+    'Hoa should (not) trust ___.',
     'Tell us your best advice for a good relationship. Use 3 phrases!',
   ],
 };
@@ -139,10 +139,10 @@ export const WIN = {
 export const LOSE = {
   banner: 'All detectives have been fired.',
   lines: [
-    'Penguin and Flamingo run to the "Honeymoon Express" boat. With the ring!',
-    'Panda waves. She still [[trusts|trust]] him. "He will come back!"',
-    'Penguin and Flamingo [[have a rocky relationship|rocky-relationship]] from day one. Not our problem.',
-    'Monkey and Giraffe [[fall out with|fall-out]] the whole class.',
+    'Nam and Vy run to the "Honeymoon Express" boat. With the ring!',
+    'Hoa waves. She still [[trusts|trust]] him. "He will come back!"',
+    'Nam and Vy [[have a rocky relationship|rocky-relationship]] from day one. Not our problem.',
+    'Bin and Linh [[fall out with|fall-out]] the whole class.',
     'Chó [[has an argument with|argument]] his sun bed. The sun bed wins.',
   ],
   last: 'Chó: "Trust is good. Checking the feet is better."',

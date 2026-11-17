@@ -5,7 +5,7 @@ import { SCENES, SCENE_BY_N } from '../data/scenes.js';
 import { QUIZ } from '../data/quiz.js';
 import { SUSPECTS } from '../data/story.js';
 
-const NAMES = ['Lan', 'Nam', 'Minh', 'Hoa', 'Tuấn', 'Linh', 'Huy', 'Mai', 'Khoa', 'Vy', 'Long', 'Trang', 'Đức', 'Ngọc', 'Bảo'];
+const NAMES = ['Lan', 'An', 'Minh', 'Thảo', 'Tuấn', 'Phúc', 'Huy', 'Mai', 'Khoa', 'Quân', 'Long', 'Trang', 'Đức', 'Ngọc', 'Bảo'];
 
 // Typical learner mistakes.
 const MISTAKES = [
@@ -75,7 +75,7 @@ export function startDemo({ db, paths, G, params }) {
       const share = outcome === 'lose' ? 0.3 : 0.75;
       for (const f of fakes) {
         if (!G.players[f.uid]) continue;
-        const v = Math.random() < share ? 'penguin' : SUSPECTS[1 + Math.floor(Math.random() * 4)].id;
+        const v = Math.random() < share ? 'nam' : SUSPECTS[1 + Math.floor(Math.random() * 4)].id;
         setTimeout(() => db.set(`${paths.votes}/${f.uid}`, v), rnd(400, 3500));
       }
     }

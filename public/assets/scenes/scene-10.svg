@@ -10,7 +10,7 @@
   <path d="M640 300 L 700 420 L 760 300" fill="#fbfbf7" stroke="#4a3428" stroke-width="4"/>
   <rect x="740" y="560" width="110" height="60" rx="6" fill="#1a1b22" stroke="#555" stroke-width="4"/>
   <g transform="translate(800 570) rotate(18) scale(1.5)"><path d="M0 0 C 30 -40 20 -110 0 -140 C -20 -110 -30 -40 0 0 Z" fill="#f58bb0" stroke="#d8638e" stroke-width="4"/><path d="M0 10 L 0 -130" stroke="#d8638e" stroke-width="3"/><path d="M0 -30 l 14 -16 M0 -30 l -14 -16" stroke="#d8638e" stroke-width="2"/><path d="M0 -60 l 14 -16 M0 -60 l -14 -16" stroke="#d8638e" stroke-width="2"/><path d="M0 -90 l 14 -16 M0 -90 l -14 -16" stroke="#d8638e" stroke-width="2"/></g>
-  <text x="600" y="640" text-anchor="middle" font-size="54" font-weight="900" fill="#ffd84d" font-family="'Baloo 2', 'Trebuchet MS', Arial">P</text>
+  <text x="600" y="640" text-anchor="middle" font-size="54" font-weight="900" fill="#ffd84d" font-family="'Baloo 2', 'Trebuchet MS', Arial">N</text>
   <g transform="translate(1200 960) scale(1.15 1.15)"><g class="ch ch-cho m-shock" style="--d:-2.58s">
   <path class="tail" d="M60 -40 C 120 -50 120 -150 86 -170 C 76 -176 70 -168 78 -160 C 100 -140 98 -80 58 -70" fill="#efae5f" stroke="#4a3428" stroke-width="6" stroke-linejoin="round"/>
   <ellipse cx="0" cy="-62" rx="66" ry="68" fill="#efae5f" stroke="#4a3428" stroke-width="6"/>

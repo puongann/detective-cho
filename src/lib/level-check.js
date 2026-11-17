@@ -6,7 +6,7 @@ import { lemmaCandidates, BE_FORMS, ADVERBS, PARTICIPLE_ADJECTIVES, participleIn
 
 export function makeLevelChecker(listText) {
 const A2 = new Set(listText.split('\n').filter((l) => !l.startsWith('#')).join(' ').toLowerCase().split(/\s+/).filter(Boolean));
-const NAMES = new Set(['sb', 'sth', 'chó', 'cho', 'panda', 'penguin', 'monkey', 'giraffe', 'flamingo', 'sunflower', 'p', 's', 'f', 'a', 'pm', 'am', 'tv', 'ok', 'mariah', 'lan', 'nam', 'hanoi', 'pinocchio', 'chief', 'inspector', 'inspectors', 'express']);
+const NAMES = new Set(['sb', 'sth', 'chó', 'cho', 'hoa', 'nam', 'bin', 'linh', 'vy', 'sunflower', 'p', 's', 'f', 'n', 'v', 'flip', 'flops', 'a', 'pm', 'am', 'tv', 'ok', 'mariah', 'lan', 'nam', 'hanoi', 'pinocchio', 'chief', 'inspector', 'inspectors', 'express']);
 const phraseWords = new Set(VOCAB.flatMap((v) => v.phrase.toLowerCase().replace(/\(.*?\)|sb|sth|someone|\//g, ' ').split(/[\s']+/)).filter(Boolean));
 // target phrase words in their inflected forms are fine too
 ['struck', 'striking', 'apologise', 'apologised', 'proposes', 'proposed', 'engaged', 'married', 'feelings', 'cheating', 'cheated', 'lied', 'admires', 'forgives', 'trusts', 'broke', 'broken', 'acquaintances', 'faithful'].forEach((w) => phraseWords.add(w));

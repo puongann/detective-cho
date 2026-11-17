@@ -19,7 +19,9 @@ export const FIELDS = [
   ['bonusPhrases', 'Bonus phrases (🐟 fish)', 'list', 'phrase ids, comma separated'],
   ['prompt', 'Prompt on the phone', 'area', 'short: 1-2 sentences'],
   ['intro', 'Story on the big screen', 'area', 'read before the student sentence'],
+  ['introVi', '↳ Tiếng Việt (story)', 'area', 'Vietnamese translation shown under the English (VI button)'],
   ['previously', '"Last time" line', 'text', 'optional'],
+  ['previouslyVi', '↳ Tiếng Việt ("last time")', 'text'],
   ['verb', 'Verb tip', 'text', 'e.g. give → given'],
   ['frame', 'Sentence frame (advice)', 'text'],
   ['hints', 'Hints 1-3 (one per line)', 'lines'],
@@ -27,8 +29,11 @@ export const FIELDS = [
   ['keywords', 'Keywords the checker accepts', 'list', 'the sentence must mention one of these'],
   ['acceptedVerbs', 'Accepted verbs (base form)', 'list', 'empty = any verb'],
   ['reaction', 'Chó reaction (after a correct clue)', 'area', 'use [[text|phrase-id]] for a phrase chip'],
+  ['reactionVi', '↳ Tiếng Việt (reaction)', 'area'],
   ['bridge', 'Bridge to the next scene', 'area'],
+  ['bridgeVi', '↳ Tiếng Việt (bridge)', 'area'],
   ['failLine', 'Fail line (clue lost)', 'area'],
+  ['failLineVi', '↳ Tiếng Việt (fail line)', 'area'],
 ];
 const KIND = Object.fromEntries(FIELDS.map(([k, , kind]) => [k, kind]));
 

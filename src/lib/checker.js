@@ -7,12 +7,13 @@ import { checkPhrase, findPhrases, tokens as phraseTokens } from './phrase-match
 import { VOCAB_BY_ID } from '../data/vocab.js';
 
 // Proper names that are always allowed (spelling) and must be capitalised.
-export const NAMES = ['Panda', 'Penguin', 'Monkey', 'Giraffe', 'Flamingo', 'Chó', 'Cho', 'Sunflower'];
-const ANIMAL_NAMES = new Set(['panda', 'penguin', 'monkey', 'giraffe', 'flamingo']);
+export const NAMES = ['Hoa', 'Nam', 'Bin', 'Linh', 'Vy', 'Chó', 'Cho', 'Sunflower'];
+// Story people: must be capitalised ("the bin" is still fine after a determiner).
+const ANIMAL_NAMES = new Set(['hoa', 'nam', 'bin', 'linh', 'vy']);
 const ALWAYS_CAPITAL = new Set(['chó', 'cho', 'i', 'pinocchio', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'vietnam', 'vietnamese', 'english', 'hanoi', 'mia']);
 const CAPITAL_OK = new Set([...ALWAYS_CAPITAL, ...ANIMAL_NAMES, 'sunflower', 'hotel', 'mr', 'mrs', 'miss', 'dear', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']);
 // Story words that are fine even if the dictionary does not know them.
-export const STORY_WHITELIST = new Set(['chó', 'cho', 'pâté', 'pate', 'café', 'cafe', 'ok', 'okay', 'pinocchio', 'hanoi', 'mia', 'tiptoe', 'tiptoes', 'tiptoed', 'tiptoeing', 'pyjamas', 'pajamas', 'jeweller', 'jeweler', 'jewellery', 'jewelry', 'apologise', 'apologised', 'apologising', 'apologize', 'apologized', 'apologizing']);
+export const STORY_WHITELIST = new Set(['hoa', 'nam', 'bin', 'linh', 'vy', 'flip', 'flops', 'chó', 'cho', 'pâté', 'pate', 'café', 'cafe', 'ok', 'okay', 'pinocchio', 'hanoi', 'mia', 'tiptoe', 'tiptoes', 'tiptoed', 'tiptoeing', 'pyjamas', 'pajamas', 'jeweller', 'jeweler', 'jewellery', 'jewelry', 'apologise', 'apologised', 'apologising', 'apologize', 'apologized', 'apologizing']);
 const DETERMINERS = new Set('the a an this that these those his her their our my your its every each one two some'.split(' '));
 const PREPOSITIONS = new Set('of in on under from with at near behind by for inside into to about'.split(' '));
 
@@ -145,7 +146,7 @@ export function check(raw, scene, { isWord = () => true } = {}) {
   }
 
   // ---- 7. Spoiler ----
-  if (scene && scene.n <= 8 && toks.includes('penguin') && /cheat|thief|stole/.test(lowerText)) add("Too early, Chó! Don't spoil the ending.");
+  if (scene && scene.n <= 8 && toks.includes('nam') && /cheat|thief|stole/.test(lowerText)) add("Too early, Chó! Don't spoil the ending.");
 
   const ok = reasons.length === 0;
   return { ok, reasons, fish: ok && phrases.length > 0, phrases };

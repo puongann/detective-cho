@@ -49,7 +49,7 @@ test('WIN has 12+ punishments, 5 suspects, cheater is on the vote', () => {
   assert.ok(STORY.SUSPECTS.some((s) => s.id === STORY.CHEATER));
 });
 
-test('story stays solvable with clues lost: many scenes point to Penguin', () => {
+test('story stays solvable with clues lost: many scenes point to Nam', () => {
   const pointToPenguin = [8, 9, 10, 11, 12, 13, 14, 15];
   assert.ok(pointToPenguin.length >= 6);
 });

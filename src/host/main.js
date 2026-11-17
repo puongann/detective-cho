@@ -145,6 +145,7 @@ function topbar(extra = '') {
       <span class="pill fish" title="Fish (vocab bonus)">🐟 <b id="fishCount">${G.fish}</b></span>
       <button class="tb-btn" data-act="vault" title="Vocab Vault (V)">📚</button>
       <button class="tb-btn" data-act="board" title="Case Board (B)">🗂️</button>
+      <button class="tb-btn vi-btn ${showVi ? '' : 'off'}" data-act="vi" title="Vietnamese translation (L)">VI</button>
       <button class="tb-btn" data-act="mute" title="Sound (M)">${isMuted() ? '🔇' : '🔊'}</button>
       <button class="tb-btn" data-act="help" title="Keys (?)">?</button>
       <button class="tb-btn" data-act="story" title="Settings: edit the story (E)">⚙️</button>
@@ -162,6 +163,7 @@ function chromeAction(a) {
   if (a === 'help') toggleOverlay('help');
   if (a === 'story') openStoryEditor();
   if (a === 'restart') toggleOverlay('restart');
+  if (a === 'vi') toggleVi();
   if (a === 'mute') { setMuted(!isMuted()); document.querySelectorAll('[data-act=mute]').forEach((b) => { b.textContent = isMuted() ? '🔇' : '🔊'; }); }
 }
 function addFish(k = 1) {
@@ -217,6 +219,7 @@ function toggleOverlay(name) {
   o.innerHTML = `<div class="overlay-card ${name}">${inner}<button class="close-x" aria-label="Close">✕</button></div>`;
   o.querySelector('.close-x').onclick = () => toggleOverlay(name);
   o.addEventListener('click', (e) => { if (e.target === o) toggleOverlay(name); });
+  if (name === 'board') o.querySelectorAll('.panel[data-n]').forEach((el) => el.onclick = () => jumpTo(Number(el.dataset.n)));
   if (name === 'restart') {
     o.querySelector('#rsKeep').onclick = () => toggleOverlay('restart');
     o.querySelector('#rsGo').onclick = () => { toggleOverlay('restart'); replay(); };
@@ -259,10 +262,24 @@ function helpHTML() {
   <div><kbd>R</kbd> reassign a scene / teacher types</div>
   <div><kbd>T</kbd> show / hide checker reasons (teacher only)</div>
   <div><kbd>B</kbd> Case Board · <kbd>V</kbd> Vocab Vault · <kbd>M</kbd> sound</div>
+  <div><kbd>←</kbd> <kbd>→</kbd> (or <kbd>&lt;</kbd> <kbd>&gt;</kbd>) previous / next clue · click a number on the rail</div>
+  <div><kbd>L</kbd> Vietnamese translation on / off</div>
   <div><kbd>E</kbd> ⚙️ edit the story (lobby only)</div>
   <div>↺ (top right) stop the game and start again from the lobby</div>
   </div>
   <p class="muted">${esc(pick(CHO_GAGS))}</p>`;
+}
+
+// Vietnamese translation under the English story (toggle: VI button / L key; remembered on this computer).
+let showVi = (() => { try { return localStorage.getItem('csd-vi') !== 'off'; } catch { return true; } })();
+document.body.classList.toggle('no-vi', !showVi);
+const vi = (t, cls = '') => (t ? `<div class="vi-line ${cls}">${esc(t)}</div>` : '');
+function toggleVi() {
+  showVi = !showVi;
+  document.body.classList.toggle('no-vi', !showVi);
+  try { localStorage.setItem('csd-vi', showVi ? 'on' : 'off'); } catch { /* private mode */ }
+  document.querySelectorAll('[data-act=vi]').forEach((b) => b.classList.toggle('off', !showVi));
+  toast(showVi ? '🇻🇳 Tiếng Việt: on' : '🇻🇳 Tiếng Việt: off', 1400);
 }
 
 function statusOf(n) { return G.pub.revealed?.[n]?.status || 'pending'; }
@@ -277,7 +294,7 @@ function panelHTML(n, { small = false } = {}) {
   if (st === 'unresolved') body = `<div class="classified">${esc(CLASSIFIED)}</div>`;
   else if (st === 'restored') body = `<div class="restored">🕵️ Restored: ${esc(plain(sc.prompt))}</div>`;
   else body = `<div class="report">“${esc(r.sentence)}”</div><div class="react">${rich(sc.reaction)}</div>`;
-  return `<div class="panel ${st} ${small ? 'small' : ''}">
+  return `<div class="panel ${st} ${small ? 'small' : ''} ${(r?.sentence || '').length > 70 ? 'long' : ''}" data-n="${n}" title="Show clue #${n} again">
     <div class="p-img"><img src="${assetUrl(sc.image)}" alt=""><span class="p-num">#${n}</span>${st === 'correct' || st === 'overridden' ? '<span class="p-ok">✔</span>' : ''}</div>
     <div class="p-cap"><div class="p-who">Detective #${n} · ${esc(r?.name || a?.name || '')}</div>${body}</div>
   </div>`;
@@ -300,6 +317,9 @@ function installKeys() {
     if (k === 'b') return toggleOverlay('board');
     if (k === 'v') return toggleOverlay('vault');
     if (k === 'm') return chromeAction('mute');
+    if (k === 'l') return toggleVi();
+    if (k === 'ArrowLeft' || k === ',' || k === '<') { e.preventDefault(); return navScene(-1); }
+    if (k === 'ArrowRight' || k === '.' || k === '>') { e.preventDefault(); return navScene(1); }
     if (k === 'e') return openStoryEditor();
     if (k === 'Escape' && overlay) return toggleOverlay(overlay);
     if (k === 't') { G.settings.showReasons = !G.settings.showReasons; document.querySelector('.reasons')?.classList.toggle('open', G.settings.showReasons); return; }
@@ -544,6 +564,7 @@ function revealShell() {
   <div class="rail" id="rail"></div>
   <div class="spotlight" id="spotlight"></div>`;
   bindChrome();
+  document.getElementById('rail').onclick = (e) => { const g = e.target.closest('[data-n]'); if (g) jumpTo(Number(g.dataset.n)); };
 }
 
 function renderRail(current) {
@@ -557,7 +578,7 @@ function renderRail(current) {
     const broken = a.st === 'unresolved' || b.st === 'unresolved';
     lines += `<path d="M${a.x} 30 Q ${(a.x + b.x) / 2} ${broken ? 46 : 42} ${b.x} 30" class="${broken ? 'string broken' : 'string'}"/>`;
   }
-  rail.innerHTML = `<svg viewBox="0 0 1500 60" class="rail-svg">${lines}${pts.map((p) => `<g class="pin ${p.st} ${p.n === current ? 'cur' : ''}"><circle cx="${p.x}" cy="30" r="17"/><text x="${p.x}" y="36">${p.n}</text></g>`).join('')}</svg>`;
+  rail.innerHTML = `<svg viewBox="0 0 1500 60" class="rail-svg">${lines}${pts.map((p) => `<g class="pin ${p.st} ${p.n === current ? 'cur' : ''}" data-n="${p.n}"><title>Clue #${p.n}</title><circle cx="${p.x}" cy="30" r="17"/><text x="${p.x}" y="36">${p.n}</text></g>`).join('')}</svg>`;
 }
 
 function spotlightFor(sc) {
@@ -570,7 +591,7 @@ function spotlightFor(sc) {
 
 async function actCard(act, t) {
   const st = document.getElementById('sceneStage');
-  st.innerHTML = `<div class="act-card"><div class="act-title">${esc(act.title)}</div><div class="act-sub">${esc(act.sub)}</div></div>`;
+  st.innerHTML = `<div class="act-card"><div class="act-title">${esc(act.title)}</div><div class="act-sub">${esc(act.sub)}</div>${vi(act.subVi, 'act-vi')}</div>`;
   sfx.drumroll(0.8);
   await wait(2600);
   return alive(t);
@@ -582,8 +603,8 @@ function sceneHTML(sc) {
     <div class="sc-pic"><img src="${assetUrl(sc.image)}" alt="${esc(sc.title)}"><div class="stamp-slot" id="stampSlot"></div></div>
     <div class="sc-text">
       <div class="sc-head"><span class="sc-num">Clue #${sc.n}</span><span class="sc-title">${esc(sc.title)}</span>${sc.mode === 'phrase' ? '<span class="tag-phrase">PHRASE</span>' : '<span class="tag-clue">CLUE</span>'}</div>
-      ${sc.previously ? `<div class="sc-prev">${rich(sc.previously, sc.glossary)}</div>` : ''}
-      <div class="sc-intro">${rich(sc.intro, sc.glossary)}</div>
+      ${sc.previously ? `<div class="sc-prev">${rich(sc.previously, sc.glossary)}${vi(sc.previouslyVi)}</div>` : ''}
+      <div class="sc-intro">${rich(sc.intro, sc.glossary)}${vi(sc.introVi)}</div>
       <div class="sc-det" id="scDet">🕵️ Detective #${sc.n} · <b>${esc(a?.name || '???')}</b> is on the case...</div>
       <div class="sc-report" id="scReport"><span class="rep-label">Detective's report:</span> <span class="rep-text" id="repText"></span><span class="caret">▍</span></div>
       <div class="sc-after" id="scAfter"></div>
@@ -602,6 +623,8 @@ async function typeSentence(text, t) {
   const el = document.getElementById('repText');
   if (!el) return;
   el.textContent = '';
+  const rep = document.getElementById('scReport');
+  if (rep) rep.style.fontSize = `${(text || '').length > 120 ? 19 : (text || '').length > 95 ? 21 : (text || '').length > 70 ? 23 : (text || '').length > 50 ? 25 : 28}px`;
   sfx.drumroll(1.2);
   if (!text) { await wait(600); el.innerHTML = '<i class="muted">(nothing written)</i>'; return; }
   let skip = false;
@@ -615,11 +638,27 @@ async function typeSentence(text, t) {
   await wait(500);
 }
 
+/** Long student sentences: smaller report font, and the text column scrolls to the newest line. */
+function fitReport() {
+  const rep = document.getElementById('scReport');
+  const len = (document.getElementById('repText')?.textContent || '').length;
+  if (rep) rep.style.fontSize = `${len > 120 ? 19 : len > 95 ? 21 : len > 70 ? 23 : len > 50 ? 25 : 28}px`;
+  const box = rep?.closest('.sc-text');
+  if (!box || box.scrollHeight <= box.clientHeight) return;
+  // show the newest lines, but never scroll the student's sentence out of view
+  const k = box.clientHeight / (box.getBoundingClientRect().height || 1);
+  const repTop = (rep.getBoundingClientRect().top - box.getBoundingClientRect().top) * k + box.scrollTop;
+  box.scrollTo({ top: Math.min(box.scrollHeight - box.clientHeight, repTop - 8), behavior: 'smooth' });
+}
+new MutationObserver(() => { const a = document.getElementById('scAfter'); if (a?.childElementCount) fitReport(); })
+  .observe(document.getElementById('stage'), { childList: true, subtree: true });
+
 const failStampHTML = (sub) => `<div class="stamp bad">${esc(FAIL_STAMP).replace(': ', ':<br>')}<small>${esc(sub)}</small></div>`;
-function stamp(ok) {
+function stamp(ok, quiet = false) {
   const slot = document.getElementById('stampSlot');
   if (!slot) return;
   slot.innerHTML = ok ? `<div class="stamp ok">${esc(pick(REVEAL_PRAISE))}</div>` : failStampHTML(FAIL_SUB);
+  if (quiet) return;
   sfx.stampHit(0.26); // the thud lands with the stamp animation
   const pic = slot.closest('.sc-pic');
   if (pic) { pic.classList.remove('thud'); void pic.offsetWidth; pic.classList.add('thud'); }
@@ -643,8 +682,60 @@ async function runReveal(from, opts = {}) {
   renderBoardEnd();
 }
 
+// ------------------------------------------------------------------ moving between clues
+const frontier = () => { for (const s of SCENES) if (!G.pub.revealed?.[s.n]) return s.n; return NUM_SCENES + 1; };
+/** Go to clue n: a clue on the board is shown again (no new judging); the next new clue plays as usual. */
+function jumpTo(n) {
+  const st = G.pub.state;
+  if (st === 'fixing') { toast('Finish the second chance first.'); return; }
+  if (!['revealing', 'paused', 'board'].includes(st)) return;
+  const f = frontier();
+  if (n > NUM_SCENES) { if (f > NUM_SCENES) { flowToken++; setGloom(false); setPub({ state: 'board', currentScene: 16 }).then(renderBoardEnd); } else toast(`Clue #${f} first!`); return; }
+  if (n < 1) return;
+  if (n > f) { toast(`Clue #${f} first! 🔎`); n = f; }
+  if (n === G.pub.currentScene && st !== 'board' && !G.pub.revealed?.[n]) return;
+  document.querySelector('.overlay')?.remove(); overlay = null;
+  runReveal(n);
+}
+function navScene(d) {
+  if (G.pub.state === 'board') { if (d < 0) jumpTo(NUM_SCENES); return; }
+  const cur = G.pub.currentScene || 1;
+  if (d > 0 && !G.pub.revealed?.[cur]) { if (skipFn) skipFn(); else toast('Finish this clue first (or Space).'); return; }
+  jumpTo(cur + d);
+}
+
+async function reviewScene(n, t, r) {
+  const sc = SCENE_BY_N[n];
+  const st = document.getElementById('sceneStage');
+  renderRail(n);
+  spotlightFor(sc);
+  setGloom(false);
+  await setPub({ state: 'revealing', currentScene: n, fix: null });
+  if (!alive(t)) return false;
+  st.innerHTML = sceneHTML(sc).replace('slide-in', 'slide-in review');
+  document.getElementById('stTag').textContent = `Clue ${n} of 15 · ${actOf(n).title}`;
+  document.getElementById('scDet').innerHTML = `🕵️ Detective #${n} · <b>${esc(r.name || G.pub.assign?.[n]?.name || '???')}</b> reported:`;
+  document.getElementById('repText').textContent = r.status === 'unresolved' ? '' : r.sentence || '';
+  document.querySelector('#scReport .caret')?.remove();
+  setReasons(G.verdicts[n]);
+  const after = document.getElementById('scAfter');
+  if (r.status === 'unresolved') {
+    document.getElementById('stampSlot').innerHTML = failStampHTML(CLASSIFIED);
+    after.innerHTML = `<div class="bridge">${rich(sc.bridge, sc.glossary)}${vi(sc.bridgeVi)}</div>`;
+    keyHandlers = { g: () => {}, x: () => overturnLast(n, t), h: () => showHint(sc) };
+  } else {
+    stamp(true, true);
+    after.innerHTML = `<div class="cho-react"><img src="${assetUrl('assets/cho.png')}" alt=""><div class="bubble">${rich(sc.reaction, sc.glossary)}${vi(sc.reactionVi)}</div></div><div class="bridge">${rich(sc.bridge, sc.glossary)}${vi(sc.bridgeVi)}</div>`;
+    keyHandlers = { g: () => doGotcha(n, t), x: () => {}, h: () => showHint(sc) };
+  }
+  fitReport();
+  await advanceWait(t, 5000);
+  return alive(t);
+}
+
 async function playScene(n, t, { gotcha = false } = {}) {
   const sc = SCENE_BY_N[n];
+  if (!gotcha && G.pub.revealed?.[n]) return reviewScene(n, t, G.pub.revealed[n]);
   const act = actOf(n);
   const st = document.getElementById('sceneStage');
   renderRail(n);
@@ -674,7 +765,7 @@ async function playScene(n, t, { gotcha = false } = {}) {
     stamp(false);
     setGloom(true);
     setTimeout(() => sfx.sad(), 650);
-    document.getElementById('scAfter').innerHTML = `<div class="fail-line">${rich(sc.failLine, sc.glossary)}</div>
+    document.getElementById('scAfter').innerHTML = `<div class="fail-line">${rich(sc.failLine, sc.glossary)}${vi(sc.failLineVi)}</div>
       <div class="pause-btns"><button class="beg-btn" id="beg">Beg for a second chance 🥺😭</button><button class="fate-btn" id="fate">Accept our fate 🪦</button></div>`;
     const decided = new Promise((res) => {
       document.getElementById('beg').onclick = () => res('beg');
@@ -707,21 +798,22 @@ async function playScene(n, t, { gotcha = false } = {}) {
   const after = document.getElementById('scAfter');
   if (result === 'unresolved') {
     document.getElementById('stampSlot').innerHTML = failStampHTML(CLASSIFIED);
-    after.innerHTML = `<div class="bridge">${rich(sc.bridge, sc.glossary)}</div>`;
+    after.innerHTML = `<div class="bridge">${rich(sc.bridge, sc.glossary)}${vi(sc.bridgeVi)}</div>`;
     await setPub({ state: 'revealing' });
     keyHandlers = { g: () => {}, x: () => overturnLast(n, t), h: () => {} };
     await advanceWait(t, 3500);
     return alive(t);
   }
+  if (result === 'overridden') after.innerHTML = ''; // drop the fail line and the Beg / Fate buttons
   stamp(true); sfx.tada();
   if (result === 'overridden') toast('X · Xin lỗi! Chó accepts the sentence.');
   if (fish) { addFish(1); after.innerHTML = '<div class="vocab-bonus">🐟 Vocab bonus!</div>'; }
   await wait(900);
-  after.insertAdjacentHTML('beforeend', `<div class="cho-react"><img src="${assetUrl('assets/cho.png')}" alt=""><div class="bubble">${rich(sc.reaction, sc.glossary)}</div></div>`);
+  after.insertAdjacentHTML('beforeend', `<div class="cho-react"><img src="${assetUrl('assets/cho.png')}" alt=""><div class="bubble">${rich(sc.reaction, sc.glossary)}${vi(sc.reactionVi)}</div></div>`);
   await setPub({ state: 'revealing' });
   keyHandlers = { g: () => doGotcha(n, t), x: () => {}, h: () => showHint(sc) };
   await wait(3200); if (!alive(t)) return false;
-  after.insertAdjacentHTML('beforeend', `<div class="bridge">${rich(sc.bridge, sc.glossary)}</div>`);
+  after.insertAdjacentHTML('beforeend', `<div class="bridge">${rich(sc.bridge, sc.glossary)}${vi(sc.bridgeVi)}</div>`);
   await advanceWait(t, 3000);
   return alive(t);
 }
@@ -832,6 +924,7 @@ function renderBoardEnd() {
   </main>`;
   bindChrome();
   $stage.querySelectorAll('[data-q]').forEach((b) => b.onclick = () => { G.settings.quizCount = Math.max(5, Math.min(10, G.settings.quizCount + Number(b.dataset.q))); saveVerdicts(); renderBoardEnd(); });
+  $stage.querySelectorAll('.board-grid .panel[data-n]').forEach((el) => el.onclick = () => jumpTo(Number(el.dataset.n)));
   $stage.querySelector('#quizBtn').onclick = startQuiz;
   $stage.querySelector('#voteBtn').onclick = startVoting;
   keyHandlers = {};
@@ -1066,7 +1159,7 @@ async function loseSequence(t) {
   const main = document.getElementById('ending');
   sfx.sad();
   main.innerHTML = `<div class="lose-banner">${esc(LOSE.banner)}</div>
-    <div class="court"><img class="court-img" src="${assetUrl('assets/scenes/lose.svg')}" alt="Penguin escapes"><div class="court-text" id="courtText"></div></div>
+    <div class="court"><img class="court-img" src="${assetUrl('assets/scenes/lose.svg')}" alt="Nam escapes"><div class="court-text" id="courtText"></div></div>
     <button class="mid-btn next-step" id="nextStep">Next ▶ (Space)</button>`;
   const ct = document.getElementById('courtText');
   await typeLines(ct, LOSE.lines, t);

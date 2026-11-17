@@ -151,79 +151,105 @@ export function glass(x, y, s = 1) {
   return `<g transform="translate(${x} ${y}) scale(${s})"><path d="M18 18 L 52 56" stroke="#6b4b2b" stroke-width="12" stroke-linecap="round"/><circle cx="0" cy="0" r="30" fill="rgba(200,235,255,.55)" stroke="#555" stroke-width="7"/></g>`;
 }
 
-// ---------- Panda: kind, sunflower on her head ----------
-export function panda(o = {}) {
+// ---------- Chibi people (Vietnamese names): big head, small body ----------
+// opts as before: { x, y, s, flip, mood, arms: down|up|cheeks|point|hold|give, sweat, ... }
+const SKIN = '#ffdcbf';
+const SKIN_D = '#e9b48f';
+const HAIR = '#2f2320';
+const limb = (d, color, w = 24) => `<path d="${d}" fill="none" stroke="${L}" stroke-width="${w + 10}" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+const hand = (x, y, r = 14) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${SKIN}" stroke="${L}" stroke-width="5"/>`;
+
+/** Arm paths for one side (sx = -1 left, 1 right). Returns { d, hx, hy } */
+function armPose(pose, sx, top, cy) {
+  const sh = [sx * 40, top + 16];
+  const P = {
+    down: [[sx * 66, top + 56], [sx * 60, top + 92]],
+    up: [[sx * 78, top - 22], [sx * 86, top - 84]],
+    cheeks: [[sx * 86, top + 26], [sx * 56, cy + 40]],
+    point: [[sx * 92, top + 4], [sx * 142, top - 6]],
+    hold: [[sx * 70, top + 66], [sx * 74, top + 22]],
+    give: [[sx * 84, top + 36], [sx * 136, top + 12]],
+  }[pose] || [[sx * 66, top + 56], [sx * 60, top + 92]];
+  const [[ex, ey], [hx, hy]] = P;
+  return { d: `M${sh[0]} ${sh[1]} Q ${ex} ${ey} ${hx} ${hy}`, hx, hy };
+}
+
+function person(o, look, kind) {
   const m = o.mood || 'happy';
-  const cy = -190;
-  const arms = o.arms || 'down';
-  const armL = arms === 'up' ? `<ellipse cx="-74" cy="-160" rx="20" ry="40" fill="${C.pandaB}" transform="rotate(30 -74 -160)"/>` : arms === 'cheeks' ? `<ellipse cx="-60" cy="-150" rx="20" ry="40" fill="${C.pandaB}" transform="rotate(20 -60 -150)"/>` : arms === 'point' ? `<ellipse cx="-70" cy="-90" rx="20" ry="40" fill="${C.pandaB}" transform="rotate(20 -70 -90)"/>` : `<ellipse cx="-66" cy="-90" rx="20" ry="40" fill="${C.pandaB}" transform="rotate(14 -66 -90)"/>`;
-  const armR = arms === 'up' ? `<ellipse cx="74" cy="-160" rx="20" ry="40" fill="${C.pandaB}" transform="rotate(-30 74 -160)"/>` : arms === 'cheeks' ? `<ellipse cx="60" cy="-150" rx="20" ry="40" fill="${C.pandaB}" transform="rotate(-20 60 -150)"/>` : arms === 'point' ? `<ellipse cx="96" cy="-118" rx="18" ry="46" fill="${C.pandaB}" transform="rotate(-70 96 -118)"/>` : arms === 'hold' ? `<ellipse cx="60" cy="-120" rx="20" ry="38" fill="${C.pandaB}" transform="rotate(-50 60 -120)"/>` : `<ellipse cx="66" cy="-90" rx="20" ry="40" fill="${C.pandaB}" transform="rotate(-14 66 -90)"/>`;
+  const legH = look.legH || 70;
+  const top = -legH - 92;            // shoulders
+  const cy = top - 66;               // head centre
+  const R = 76;
+  const arms = o.arms || (o.wings === 'up' || o.wing === 'up' ? 'up' : o.wings === 'give' ? 'give' : o.wings === 'point' ? 'point' : 'down');
+  const armL = armPose(arms === 'point' || arms === 'give' || arms === 'hold' ? 'down' : arms, -1, top, cy);
+  const armR = armPose(arms, 1, top, cy);
+  const sleeve = look.sleeve || look.top;
+  const legs = look.skirt
+    ? `${limb(`M-20 ${-legH + 10} L -22 -14`, SKIN, 18)}${limb(`M20 ${-legH + 10} L 22 -14`, SKIN, 18)}`
+    : `${limb(`M-22 ${-legH - 6} L -24 -16`, look.legs || SKIN, 26)}${limb(`M22 ${-legH - 6} L 24 -16`, look.legs || SKIN, 26)}`;
+  const shoes = look.flipflops
+    ? `<ellipse cx="-30" cy="-6" rx="24" ry="9" fill="#5fb6e8" stroke="${L}" stroke-width="4"/><ellipse cx="30" cy="-6" rx="24" ry="9" fill="#5fb6e8" stroke="${L}" stroke-width="4"/><path d="M-30 -14 l -8 -8 M-30 -14 l 8 -8 M30 -14 l -8 -8 M30 -14 l 8 -8" stroke="${L}" stroke-width="4"/>`
+    : `<path d="M-48 -2 Q -48 -24 -26 -24 L -14 -24 Q -8 -2 -14 0 Z" fill="${look.shoes || '#5a3a2a'}" stroke="${L}" stroke-width="5" stroke-linejoin="round"/><path d="M48 -2 Q 48 -24 26 -24 L 14 -24 Q 8 -2 14 0 Z" fill="${look.shoes || '#5a3a2a'}" stroke="${L}" stroke-width="5" stroke-linejoin="round"/>${look.shiny ? '<path d="M-38 -16 l 10 -3 M30 -19 l 10 3" stroke="#fff" stroke-width="4" stroke-linecap="round"/>' : ''}`;
+  const torso = look.skirt
+    ? `<path d="M-40 ${top} Q 0 ${top - 12} 40 ${top} L 48 ${top + 50} Q 84 ${-legH + 20} 90 ${-legH + 40} Q 0 ${-legH + 62} -90 ${-legH + 40} Q -84 ${-legH + 20} -48 ${top + 50} Z" fill="${look.top}" stroke="${L}" stroke-width="${W}" stroke-linejoin="round"/>`
+    : `<path d="M-42 ${top} Q 0 ${top - 12} 42 ${top} L 50 ${-legH + 4} Q 0 ${-legH + 16} -50 ${-legH + 4} Z" fill="${look.top}" stroke="${L}" stroke-width="${W}" stroke-linejoin="round"/>`;
+  const face = `
+    <circle cx="0" cy="${cy}" r="${R}" fill="${SKIN}" stroke="${L}" stroke-width="${W}"/>
+    <ellipse cx="${-R + 4}" cy="${cy + 10}" rx="12" ry="16" fill="${SKIN}" stroke="${L}" stroke-width="5"/><ellipse cx="${R - 4}" cy="${cy + 10}" rx="12" ry="16" fill="${SKIN}" stroke="${L}" stroke-width="5"/>
+    <circle cx="0" cy="${cy}" r="${R - 3}" fill="${SKIN}"/>`;
+  const nose = o.longNose
+    ? `<path d="M-4 ${cy + 18} L 220 ${cy + 4} Q 232 ${cy + 12} 220 ${cy + 22} L -4 ${cy + 30} Z" fill="${SKIN}" stroke="${L}" stroke-width="5" stroke-linejoin="round"/>`
+    : `<path d="M-3 ${cy + 22} q 4 4 8 0" fill="none" stroke="${SKIN_D}" stroke-width="4" stroke-linecap="round"/>`;
   const inner = `
-  <ellipse cx="-30" cy="-10" rx="28" ry="18" fill="${C.pandaB}"/><ellipse cx="30" cy="-10" rx="28" ry="18" fill="${C.pandaB}"/>
-  <ellipse cx="0" cy="-80" rx="66" ry="74" fill="${o.pyjamas ? '#bcd7ff' : C.pandaW}" stroke="${L}" stroke-width="${W}"/>
-  ${o.pyjamas ? `<path d="M-60 -110 L 60 -110 M-64 -80 L 64 -80 M-60 -50 L 60 -50" stroke="#fff" stroke-width="8"/>` : ''}
-  ${armL}${armR}
-  <circle cx="-56" cy="${cy - 62}" r="26" fill="${C.pandaB}"/><circle cx="56" cy="${cy - 62}" r="26" fill="${C.pandaB}"/>
-  <ellipse cx="0" cy="${cy}" rx="82" ry="70" fill="${C.pandaW}" stroke="${L}" stroke-width="${W}"/>
-  <ellipse cx="-30" cy="${cy}" rx="22" ry="28" fill="${C.pandaB}" transform="rotate(25 -30 ${cy})"/>
-  <ellipse cx="30" cy="${cy}" rx="22" ry="28" fill="${C.pandaB}" transform="rotate(-25 30 ${cy})"/>
-  ${m === 'happy' || m === 'sleep' || m === 'cry' ? eyes(m, 0, cy, 30).replace(/stroke="#4a3428"/g, 'stroke="#fff"') : eyes(m, 0, cy, 30).replace(/fill="#4a3428"/g, 'fill="#fff"').replace(/stroke="#4a3428"/g, 'stroke="#fff"')}
-  ${m === 'cry' ? '' : ''}
-  <ellipse cx="0" cy="${cy + 22}" rx="10" ry="7" fill="${C.pandaB}"/>
-  ${mouth(m, 0, cy + 38, 10)}
-  ${blush(-52, cy + 30)}${blush(52, cy + 30)}
-  ${sunflower(-48, cy - 54, 0.8)}
-  ${o.sweat ? sweat(70, cy - 30) : ''}`;
-  return wrap(inner, o, 'panda');
+  ${look.back ? look.back(cy, R) : ''}
+  ${legs}${shoes}
+  ${limb(armL.d, sleeve)}${hand(armL.hx, armL.hy)}
+  ${torso}
+  ${look.outfit ? look.outfit(top, legH) : ''}
+  ${limb(armR.d, sleeve)}${hand(armR.hx, armR.hy)}
+  ${look.held ? look.held(armR.hx, armR.hy, arms) : ''}
+  ${face}
+  ${eyes(m, 0, cy + 6, 30, 8)}
+  ${mouth(m, 0, cy + 38, 12)}
+  ${blush(-46, cy + 30, 12)}${blush(46, cy + 30, 12)}
+  ${nose}
+  ${look.hair(cy, R)}
+  ${look.glasses ? `<g fill="rgba(220,240,255,.35)" stroke="${L}" stroke-width="5"><circle cx="-30" cy="${cy + 6}" r="22"/><circle cx="30" cy="${cy + 6}" r="22"/></g><path d="M-8 ${cy + 4} L 8 ${cy + 4}" stroke="${L}" stroke-width="5"/>` : ''}
+  ${look.extra ? look.extra(cy, R, top) : ''}
+  ${o.sweat || m === 'sweat' ? sweat(-R - 6, cy - 30) + sweat(R + 4, cy) : ''}`;
+  return wrap(inner, o, kind);
+}
+
+// ---------- Hoa: kind and sweet, sunflower clip, yellow dress ----------
+export function hoa(o = {}) {
+  return person(o, {
+    top: o.pyjamas ? '#bcd7ff' : '#ffd967', skirt: true, shoes: '#e9a23b',
+    outfit: o.pyjamas ? (top) => `<path d="M-60 ${top + 40} L 60 ${top + 40} M-70 ${top + 80} L 70 ${top + 80}" stroke="#fff" stroke-width="8"/>` : (top) => `<path d="M-40 ${top + 4} Q 0 ${top + 30} 40 ${top + 4}" fill="none" stroke="#fff" stroke-width="7"/>`,
+    back: (cy, R) => `<path d="M${-R + 2} ${cy} Q ${-R - 18} ${cy + 130} -40 ${cy + 150} L 40 ${cy + 150} Q ${R + 18} ${cy + 130} ${R - 2} ${cy} Z" fill="${HAIR}" stroke="${L}" stroke-width="5"/>`,
+    hair: (cy, R) => `<path d="M${-R - 4} ${cy + 10} Q ${-R - 4} ${cy - R - 14} 0 ${cy - R - 8} Q ${R + 4} ${cy - R - 14} ${R + 4} ${cy + 10} Q ${R - 8} ${cy - 30} 30 ${cy - 34} Q 10 ${cy - 22} -6 ${cy - 40} Q -30 ${cy - 22} -56 ${cy - 30} Q ${-R + 4} ${cy - 20} ${-R - 4} ${cy + 10} Z" fill="${HAIR}" stroke="${L}" stroke-width="5" stroke-linejoin="round"/>${sunflower(-50, cy - 56, 0.75)}`,
+  }, 'hoa');
 }
 export function sunflower(x, y, s = 1) {
   return `<g transform="translate(${x} ${y}) scale(${s})">${Array.from({ length: 10 }, (_, i) => `<ellipse cx="0" cy="-20" rx="9" ry="18" fill="#ffd23f" stroke="#d29a1c" stroke-width="2" transform="rotate(${i * 36})"/>`).join('')}<circle r="13" fill="#7a4b22" stroke="#4a2f16" stroke-width="2"/></g>`;
 }
 
-// ---------- Penguin: black jacket look, red bow tie, always an excuse ----------
-export function penguin(o = {}) {
-  const m = o.mood || 'happy';
-  const cy = -190;
-  const beakLen = o.longBeak ? 300 : 26;
-  const wings = o.wings || 'down';
-  const wingL = wings === 'up' ? `<path d="M-58 -150 Q -120 -230 -96 -250 Q -80 -200 -50 -170 Z" fill="${C.peng}" stroke="${L}" stroke-width="5"/>` : wings === 'point' ? `<path d="M-58 -120 Q -150 -140 -160 -126 Q -110 -110 -56 -96 Z" fill="${C.peng}" stroke="${L}" stroke-width="5"/>` : `<path d="M-60 -140 Q -100 -90 -80 -50 Q -64 -80 -54 -110 Z" fill="${C.peng}" stroke="${L}" stroke-width="5"/>`;
-  const wingR = wings === 'up' ? `<path d="M58 -150 Q 120 -230 96 -250 Q 80 -200 50 -170 Z" fill="${C.peng}" stroke="${L}" stroke-width="5"/>` : wings === 'give' ? `<path d="M58 -130 Q 130 -130 150 -120 Q 110 -100 54 -100 Z" fill="${C.peng}" stroke="${L}" stroke-width="5"/>` : `<path d="M60 -140 Q 100 -90 80 -50 Q 64 -80 54 -110 Z" fill="${C.peng}" stroke="${L}" stroke-width="5"/>`;
-  const inner = `
-  <ellipse cx="-26" cy="-6" rx="26" ry="11" fill="${C.beak}" stroke="${L}" stroke-width="4"/><ellipse cx="26" cy="-6" rx="26" ry="11" fill="${C.beak}" stroke="${L}" stroke-width="4"/>
-  <path d="M0 -270 C 80 -270 80 -110 66 -60 C 56 -10 -56 -10 -66 -60 C -80 -110 -80 -270 0 -270 Z" fill="${C.peng}" stroke="${L}" stroke-width="${W}"/>
-  <path d="M0 -200 C 50 -200 52 -100 44 -60 C 36 -26 -36 -26 -44 -60 C -52 -100 -50 -200 0 -200 Z" fill="${C.pengBelly}"/>
-  ${wingL}${wingR}
-  <path d="M-22 -184 L 0 -174 L 22 -184 L 22 -160 L 0 -170 L -22 -160 Z" fill="${C.red}" stroke="${L}" stroke-width="3"/>
-  <ellipse cx="-24" cy="${cy - 36}" rx="17" ry="19" fill="#fff"/><ellipse cx="24" cy="${cy - 36}" rx="17" ry="19" fill="#fff"/>
-  ${eyes(m, 0, cy - 36, 24, 6)}
-  <path d="M-14 ${cy - 14} L ${beakLen > 30 ? 0 : 0} ${cy - 14 + 0} L 14 ${cy - 14} L 0 ${cy - 14 + beakLen * 0.5} Z" fill="${C.beak}" stroke="${L}" stroke-width="4" stroke-linejoin="round" ${o.longBeak ? `transform="rotate(-70 0 ${cy - 14})"` : ''}/>
-  ${blush(-40, cy - 6, 9)}${blush(40, cy - 6, 9)}
-  ${m === 'sly' || m === 'sweat' ? `<path d="M-10 ${cy + 6} q 10 8 20 0" fill="none" stroke="${L}" stroke-width="4"/>` : ''}
-  ${o.sweat || m === 'sweat' ? sweat(-60, cy - 50) + sweat(58, cy - 20) : ''}`;
-  return wrap(inner, o, 'penguin');
+// ---------- Nam: black jacket, red bow tie, shiny party shoes, always an excuse ----------
+export function nam(o = {}) {
+  return person(o, {
+    top: '#2b2c35', sleeve: '#2b2c35', legs: '#2b2c35', shoes: '#1a1a1f', shiny: true,
+    outfit: (top) => `<path d="M-16 ${top - 4} L 0 ${top + 44} L 16 ${top - 4} Z" fill="#fbfbf7" stroke="${L}" stroke-width="4" stroke-linejoin="round"/><path d="M-18 ${top + 4} L 0 ${top + 14} L 18 ${top + 4} L 18 ${top + 24} L 0 ${top + 14} L -18 ${top + 24} Z" fill="${C.red}" stroke="${L}" stroke-width="3"/>`,
+    hair: (cy, R) => `<path d="M${-R - 2} ${cy + 4} Q ${-R} ${cy - R - 16} 0 ${cy - R - 12} Q ${R + 10} ${cy - R - 10} ${R + 2} ${cy + 4} Q ${R - 6} ${cy - 34} 46 ${cy - 40} Q -10 ${cy - 30} -40 ${cy - 56} Q ${-R + 10} ${cy - 30} ${-R - 2} ${cy + 4} Z" fill="${HAIR}" stroke="${L}" stroke-width="5" stroke-linejoin="round"/><path d="M-30 ${cy - R + 4} q 30 -14 60 -4" fill="none" stroke="#6a5550" stroke-width="5" stroke-linecap="round"/>`,
+  }, 'nam');
 }
 
-// ---------- Monkey: bananas and jokes ----------
-export function monkey(o = {}) {
-  const m = o.mood || 'happy';
-  const cy = -180;
-  const inner = `
-  <path d="M40 -40 C 120 -40 130 -140 90 -150 C 70 -154 70 -130 86 -130" fill="none" stroke="${L}" stroke-width="18" stroke-linecap="round"/>
-  <path d="M40 -40 C 120 -40 130 -140 90 -150 C 70 -154 70 -130 86 -130" fill="none" stroke="${C.monkey}" stroke-width="9" stroke-linecap="round"/>
-  <ellipse cx="-24" cy="-8" rx="22" ry="12" fill="${C.monkey}" stroke="${L}" stroke-width="5"/><ellipse cx="24" cy="-8" rx="22" ry="12" fill="${C.monkey}" stroke="${L}" stroke-width="5"/>
-  <ellipse cx="0" cy="-70" rx="52" ry="62" fill="${C.monkey}" stroke="${L}" stroke-width="${W}"/>
-  <ellipse cx="0" cy="-60" rx="30" ry="38" fill="${C.monkeyFace}"/>
-  ${o.arms === 'up' ? `<path d="M-46 -100 Q -90 -160 -80 -200" stroke="${L}" stroke-width="26" stroke-linecap="round" fill="none"/><path d="M-46 -100 Q -90 -160 -80 -200" stroke="${C.monkey}" stroke-width="16" stroke-linecap="round" fill="none"/><path d="M46 -100 Q 90 -160 80 -200" stroke="${L}" stroke-width="26" stroke-linecap="round" fill="none"/><path d="M46 -100 Q 90 -160 80 -200" stroke="${C.monkey}" stroke-width="16" stroke-linecap="round" fill="none"/>`
-    : `<path d="M-46 -100 Q -86 -70 -70 -36" stroke="${L}" stroke-width="26" stroke-linecap="round" fill="none"/><path d="M-46 -100 Q -86 -70 -70 -36" stroke="${C.monkey}" stroke-width="16" stroke-linecap="round" fill="none"/><path d="M46 -100 Q ${o.arms === 'hold' ? '90 -130 84 -150' : '86 -70 70 -36'}" stroke="${L}" stroke-width="26" stroke-linecap="round" fill="none"/><path d="M46 -100 Q ${o.arms === 'hold' ? '90 -130 84 -150' : '86 -70 70 -36'}" stroke="${C.monkey}" stroke-width="16" stroke-linecap="round" fill="none"/>`}
-  <circle cx="-74" cy="${cy}" r="26" fill="${C.monkeyFace}" stroke="${L}" stroke-width="${W}"/><circle cx="74" cy="${cy}" r="26" fill="${C.monkeyFace}" stroke="${L}" stroke-width="${W}"/>
-  <circle cx="0" cy="${cy}" r="68" fill="${C.monkey}" stroke="${L}" stroke-width="${W}"/>
-  <path d="M-50 ${cy + 10} C -50 ${cy - 50} -6 ${cy - 30} 0 ${cy - 14} C 6 ${cy - 30} 50 ${cy - 50} 50 ${cy + 10} C 50 ${cy + 60} -50 ${cy + 60} -50 ${cy + 10} Z" fill="${C.monkeyFace}"/>
-  ${eyes(m, 0, cy - 8, 22, 7)}
-  <ellipse cx="-6" cy="${cy + 14}" rx="3" ry="2.5" fill="${L}"/><ellipse cx="6" cy="${cy + 14}" rx="3" ry="2.5" fill="${L}"/>
-  ${mouth(m, 0, cy + 28, 18)}
-  ${o.banana ? banana(o.arms === 'hold' ? 84 : 70, o.arms === 'hold' ? -165 : -40, 0.9) : ''}
-  ${o.sweat || m === 'sweat' ? sweat(-56, cy - 50) + sweat(60, cy - 40) : ''}`;
-  return wrap(inner, o, 'monkey');
+// ---------- Bin: bananas and jokes, orange cap, flip-flops ----------
+export function bin(o = {}) {
+  return person(o, {
+    top: '#7ac36a', legs: SKIN, flipflops: true,
+    outfit: (top, legH) => `<path d="M-50 ${-legH + 4} L -52 ${-legH + 30} L -6 ${-legH + 30} L 0 ${-legH + 14} L 6 ${-legH + 30} L 52 ${-legH + 30} L 50 ${-legH + 4} Z" fill="#4a7bd9" stroke="${L}" stroke-width="5" stroke-linejoin="round"/>${banana(0, top + 44, 0.45)}`,
+    held: o.banana ? (hx, hy) => banana(hx + 6, hy - 26, 0.8) : null,
+    hair: (cy, R) => `<path d="M${-R} ${cy - 6} L ${-R + 6} ${cy - 40} L ${-R + 26} ${cy - 30} L ${-R + 30} ${cy - 62} L -10 ${cy - 44} L 10 ${cy - 70} L 30 ${cy - 44} L ${R - 18} ${cy - 56} L ${R - 10} ${cy - 30} L ${R} ${cy - 6} Z" fill="#7a4b2a" stroke="${L}" stroke-width="5" stroke-linejoin="round"/><path d="M${-R + 4} ${cy - 30} Q 0 ${cy - R - 40} ${R - 4} ${cy - 30} Z" fill="#ff9f43" stroke="${L}" stroke-width="${W}" stroke-linejoin="round"/><path d="M${-R + 10} ${cy - 30} Q ${-R - 40} ${cy - 30} ${-R - 46} ${cy - 18} L ${-R + 6} ${cy - 18} Z" fill="#ff9f43" stroke="${L}" stroke-width="5" stroke-linejoin="round"/><circle cx="0" cy="${cy - R - 10}" r="7" fill="#ff9f43" stroke="${L}" stroke-width="4"/>`,
+  }, 'bin');
 }
 export function banana(x, y, s = 1, peel = false) {
   if (peel) {
@@ -232,52 +258,28 @@ export function banana(x, y, s = 1, peel = false) {
   return `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-10 -40 Q -40 10 10 40 Q 30 46 34 38 Q -10 20 4 -36 Z" fill="#ffd84d" stroke="#8a6a1a" stroke-width="5" stroke-linejoin="round"/><path d="M-10 -40 l -2 -10" stroke="#5a4210" stroke-width="7"/></g>`;
 }
 
-// ---------- Giraffe: long neck, sees everything, camera ----------
-export function giraffe(o = {}) {
-  const m = o.mood || 'happy';
-  const top = -380;
-  const inner = `
-  <rect x="-40" y="-60" width="20" height="60" rx="8" fill="${C.giraffe}" stroke="${L}" stroke-width="5"/><rect x="20" y="-60" width="20" height="60" rx="8" fill="${C.giraffe}" stroke="${L}" stroke-width="5"/>
-  <ellipse cx="0" cy="-90" rx="58" ry="52" fill="${C.giraffe}" stroke="${L}" stroke-width="${W}"/>
-  <path d="M-22 -120 L -26 ${top + 40} L 22 ${top + 40} L 22 -120 Z" fill="${C.giraffe}" stroke="${L}" stroke-width="${W}" stroke-linejoin="round"/>
-  ${[[-8, -150], [8, -200], [-10, -250], [6, -300]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="9" fill="${C.spot}"/>`).join('')}
-  <circle cx="-28" cy="-96" r="12" fill="${C.spot}"/><circle cx="24" cy="-80" r="10" fill="${C.spot}"/>
-  ${o.arms === 'point' ? `<path d="M30 -100 Q 90 -140 110 -150" stroke="${L}" stroke-width="18" stroke-linecap="round" fill="none"/><path d="M30 -100 Q 90 -140 110 -150" stroke="${C.giraffe}" stroke-width="9" stroke-linecap="round" fill="none"/>` : ''}
-  <path d="M-16 ${top} l -4 -34 M16 ${top} l 4 -34" stroke="${L}" stroke-width="7"/><circle cx="-20" cy="${top - 36}" r="8" fill="${C.spot}" stroke="${L}" stroke-width="4"/><circle cx="20" cy="${top - 36}" r="8" fill="${C.spot}" stroke="${L}" stroke-width="4"/>
-  <ellipse cx="-46" cy="${top + 2}" rx="20" ry="9" fill="${C.giraffe}" stroke="${L}" stroke-width="4" transform="rotate(-20 -46 ${top + 2})"/><ellipse cx="46" cy="${top + 2}" rx="20" ry="9" fill="${C.giraffe}" stroke="${L}" stroke-width="4" transform="rotate(20 46 ${top + 2})"/>
-  <ellipse cx="0" cy="${top + 20}" rx="42" ry="48" fill="${C.giraffe}" stroke="${L}" stroke-width="${W}"/>
-  <ellipse cx="0" cy="${top + 46}" rx="30" ry="22" fill="#f8dc8c"/>
-  ${eyes(m, 0, top + 10, 18, 6)}
-  ${m === 'happy' || m === 'default' || !o.mood ? `<path d="M-30 ${top + 2} l -6 -6 M-24 ${top - 2} l -3 -8 M30 ${top + 2} l 6 -6 M24 ${top - 2} l 3 -8" stroke="${L}" stroke-width="3"/>` : ''}
-  ${mouth(m, 0, top + 50, 10)}
-  ${o.camera ? camera(0, -150, 0.9) : ''}`;
-  return wrap(inner, o, 'giraffe');
+// ---------- Linh: very tall, glasses, camera, sees everything ----------
+export function linh(o = {}) {
+  return person(o, {
+    legH: 150, top: '#a97de0', legs: '#4a6fa8', shoes: '#f4f1ea', glasses: true,
+    back: (cy, R) => `<path d="M${R - 10} ${cy - 40} Q ${R + 70} ${cy - 30} ${R + 40} ${cy + 70} Q ${R + 30} ${cy + 20} ${R - 10} ${cy - 10} Z" fill="#4a2f22" stroke="${L}" stroke-width="5" stroke-linejoin="round"/>`,
+    hair: (cy, R) => `<path d="M${-R - 2} ${cy + 6} Q ${-R} ${cy - R - 14} 0 ${cy - R - 10} Q ${R} ${cy - R - 14} ${R + 2} ${cy + 6} Q ${R - 10} ${cy - 40} 20 ${cy - 46} Q -30 ${cy - 44} ${-R - 2} ${cy + 6} Z" fill="#4a2f22" stroke="${L}" stroke-width="5" stroke-linejoin="round"/><circle cx="${R - 6}" cy="${cy - 40}" r="9" fill="#ff6b8b" stroke="${L}" stroke-width="3"/>`,
+    extra: o.camera ? (cy, R, top) => camera(0, top + 70, 0.8) : null,
+  }, 'linh');
 }
 export function camera(x, y, s = 1) {
   return `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-20 -120 Q -50 -60 -30 -20 M20 -120 Q 50 -60 30 -20" stroke="#333" stroke-width="4" fill="none"/><rect x="-42" y="-26" width="84" height="56" rx="10" fill="#444" stroke="${L}" stroke-width="5"/><circle cx="0" cy="2" r="18" fill="#7fb7e6" stroke="#222" stroke-width="5"/><rect x="18" y="-34" width="16" height="10" fill="#444"/></g>`;
 }
 
-// ---------- Flamingo: pink hotel singer ----------
-export function flamingo(o = {}) {
-  const m = o.mood || 'happy';
-  const inner = `
-  <path d="M-6 0 L -6 -120 M14 -60 L 14 -120" stroke="${C.flamingoD}" stroke-width="7" stroke-linecap="round"/>
-  <path d="M14 -60 L 30 -70" stroke="${C.flamingoD}" stroke-width="7" stroke-linecap="round"/>
-  <path d="M-20 0 L 8 0" stroke="${C.flamingoD}" stroke-width="7" stroke-linecap="round"/>
-  <ellipse cx="0" cy="-160" rx="70" ry="48" fill="${C.flamingo}" stroke="${L}" stroke-width="${W}"/>
-  <path d="M30 -170 Q 90 -200 70 -150 Q 60 -140 30 -150Z" fill="${C.flamingoD}" stroke="${L}" stroke-width="4"/>
-  ${o.wing === 'up' ? `<path d="M-40 -170 Q -110 -230 -100 -270 Q -70 -220 -30 -190Z" fill="${C.flamingoD}" stroke="${L}" stroke-width="5"/>` : `<path d="M-50 -170 Q -20 -130 30 -150 Q 0 -190 -50 -170Z" fill="${C.flamingoD}" stroke="${L}" stroke-width="4"/>`}
-  <path d="M-46 -180 C -90 -240 -20 -270 -26 -320 C -30 -350 -70 -350 -60 -310" fill="none" stroke="${L}" stroke-width="30" stroke-linecap="round"/>
-  <path d="M-46 -180 C -90 -240 -20 -270 -26 -320 C -30 -350 -70 -350 -60 -310" fill="none" stroke="${C.flamingo}" stroke-width="19" stroke-linecap="round"/>
-  <circle cx="-40" cy="-332" r="34" fill="${C.flamingo}" stroke="${L}" stroke-width="${W}"/>
-  <path d="M-72 -330 Q -100 -320 -96 -290 Q -86 -300 -74 -312 Z" fill="#fff" stroke="${L}" stroke-width="4"/><path d="M-96 -290 Q -94 -282 -88 -296Z" fill="${L}"/>
-  ${eyes(m, -34, -340, 0, 5)}
-  <path d="M-58 -352 l -6 -6 M-50 -358 l -2 -8" stroke="${L}" stroke-width="3"/>
-  ${blush(-24, -322, 8)}
-  <circle cx="-14" cy="-314" r="5" fill="${C.gold}" stroke="${L}" stroke-width="2"/>
-  ${o.mic ? `<g><path d="M-100 -280 L -80 -230" stroke="#333" stroke-width="8"/><circle cx="-104" cy="-290" r="14" fill="#666" stroke="#222" stroke-width="4"/></g>` : ''}
-  ${o.ring ? `<g transform="translate(-100 -275)">${ringShape(0, 0, 1.2)}${sparkle(20, -24, 1.2)}</g>` : ''}`;
-  return wrap(inner, o, 'flamingo');
+// ---------- Vy: the hotel singer, pink dress, pink feather boa ----------
+export function vy(o = {}) {
+  return person(o, {
+    top: C.flamingo, skirt: true, shoes: C.flamingoD,
+    back: (cy, R) => `<path d="M${-R} ${cy - 10} Q ${-R - 40} ${cy + 60} ${-R - 10} ${cy + 130} Q -30 ${cy + 110} -20 ${cy + 60} L 20 ${cy + 60} Q 30 ${cy + 110} ${R + 10} ${cy + 130} Q ${R + 40} ${cy + 60} ${R} ${cy - 10} Z" fill="#5b2f3a" stroke="${L}" stroke-width="5" stroke-linejoin="round"/>`,
+    outfit: (top) => `<g fill="#ffb8d0" stroke="${C.flamingoD}" stroke-width="3">${[-46, -30, -14, 2, 18, 34, 50].map((x, i) => `<circle cx="${x}" cy="${top + 6 + (i % 2) * 8}" r="13"/>`).join('')}</g>`,
+    held: o.mic ? (hx, hy) => `<path d="M${hx} ${hy} L ${hx + 4} ${hy - 40}" stroke="#333" stroke-width="8"/><circle cx="${hx + 5}" cy="${hy - 50}" r="14" fill="${C.gold}" stroke="${L}" stroke-width="4"/>` : o.ring ? (hx, hy) => `<g transform="translate(${hx} ${hy - 30})">${ringShape(0, 0, 1.2)}${sparkle(22, -24, 1.2)}</g>` : null,
+    hair: (cy, R) => `<path d="M${-R - 4} ${cy + 14} Q ${-R - 6} ${cy - R - 14} 0 ${cy - R - 10} Q ${R + 6} ${cy - R - 14} ${R + 4} ${cy + 14} Q ${R - 4} ${cy - 30} 20 ${cy - 40} Q -20 ${cy - 20} -50 ${cy - 34} Q ${-R + 2} ${cy - 10} ${-R - 4} ${cy + 14} Z" fill="#5b2f3a" stroke="${L}" stroke-width="5" stroke-linejoin="round"/><g transform="translate(${-R + 14} ${cy - 50})">${Array.from({ length: 5 }, (_, i) => `<ellipse cx="0" cy="-12" rx="9" ry="14" fill="${C.flamingo}" stroke="${C.flamingoD}" stroke-width="3" transform="rotate(${i * 72})"/>`).join('')}<circle r="7" fill="${C.gold}"/></g><circle cx="${R - 2}" cy="${cy + 34}" r="6" fill="${C.gold}" stroke="${L}" stroke-width="2"/>`,
+  }, 'vy');
 }
 
 // ---------- props ----------

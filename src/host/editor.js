@@ -40,7 +40,7 @@ export function openEditor({ root, isWord, onSave, onClose, toast }) {
         <div class="ed-pic"><img id="edPic" alt=""></div>
         <div class="ed-box">
           <div class="ed-h">🧪 Test a student sentence</div>
-          <div class="ed-test"><input id="edTry" placeholder="The ring was given to Panda." autocomplete="off" spellcheck="false"><button class="mini-btn" id="edTryBtn">Test</button></div>
+          <div class="ed-test"><input id="edTry" placeholder="The ring was given to Hoa." autocomplete="off" spellcheck="false"><button class="mini-btn" id="edTryBtn">Test</button></div>
           <div id="edTryOut" class="ed-out"></div>
         </div>
         <div class="ed-box">

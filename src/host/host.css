@@ -372,3 +372,27 @@ kbd { display: inline-block; min-width: 1.6em; text-align: center; background: #
 .overlay-card.board .p-img { height: auto; flex: 1 1 0; min-height: 0; }
 .overlay-card.board .p-img img { height: 100%; }
 .overlay-card.board .p-cap { flex: none; max-height: 80px; }
+
+/* Vietnamese translation under the story (VI button / L) */
+.vi-line { font-family: var(--body); font-style: italic; font-weight: 600; font-size: .78em; color: #6d7f99; margin-top: 3px; line-height: 1.3; }
+.act-card .vi-line.act-vi { font-size: 26px; color: #fff; text-shadow: 0 2px 0 var(--ink); margin-top: 12px; }
+.bridge .vi-line { color: #c98a86; }
+.fail-line .vi-line { color: #b86a63; }
+body.no-vi .vi-line { display: none; }
+.tb-btn.vi-btn { font-family: var(--display); font-size: 18px; background: #dff0ff; }
+.tb-btn.vi-btn.off { background: #fff; color: var(--ink-soft); text-decoration: line-through; }
+
+/* jump between clues */
+.rail .pin { cursor: pointer; }
+.rail .pin:hover circle { stroke-width: 5; filter: brightness(1.08); }
+.pin.pending:hover circle { fill: #fff1d6; }
+.board-end .panel[data-n], .overlay-card.board .panel[data-n]:not(.locked) { cursor: pointer; }
+.board-end .panel[data-n]:hover { transform: translateY(-3px) rotate(-.5deg); }
+
+/* long sentences: the text column scrolls instead of cutting the end off */
+.sc-text { overflow-y: auto; scrollbar-width: none; min-height: 0; }
+.sc-text > * { flex-shrink: 0; }
+.sc-text::-webkit-scrollbar { display: none; }
+.sc-report { overflow-wrap: anywhere; transition: font-size .2s; }
+.panel.long .p-cap { font-size: 13px; }
+.panel.long .report { letter-spacing: -.3px; }
